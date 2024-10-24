@@ -63,9 +63,14 @@ function mwValidNameMessageBody(
  * @apiName PostMessage
  * @apiGroup Message
  *
- * @apiBody {string} name someone's name *unique
- * @apiBody {string} message a message to store with the name
- * @apiBody {number} priority a message priority [1-3]
+ * @apiBody {string} title name of the book
+ * @apiBody {string} author name of the book author
+ * @apiBody {number} isbn unique book identifier *unique
+ * @apiBody {number} 1_star_rating number of one-star ratings
+ * @apiBody {number} 2_star_rating number of two-star ratings
+ * @apiBody {number} 3_star_rating number of three-star ratings
+ * @apiBody {number} 4_star_rating number of four-star ratings
+ * @apiBody {number} 5_star_rating number of five-star ratings
  *
  * @apiSuccess (Success 201) {String} entry the string:
  *      "{<code>priority</code>} - [<code>name</code>] says: <code>message</code>"
@@ -257,21 +262,26 @@ messageRouter.get('/:name', (request: Request, response: Response) => {
 });
 
 /**
- * @api {put} /message Request to change an entry
+ * @api {put} /message Request to update book rating
  *
- * @apiDescription Request to replace the message entry in the DB for name
+ * @apiDescription Updates the count of star ratings or a book by title
  *
  * @apiName PutMessage
  * @apiGroup Message
  *
- * @apiBody {String} name the name entry
- * @apiBody {String} message a message to replace with the associated name
+ * @apiBody {String} title The title of the book to update.
+ * @apiBody {Number{0+}} [rating_1_star] The new count for 1-star ratings.
+ * @apiBody {Number{0+}} [rating_2_star] The new count for 2-star ratings.
+ * @apiBody {Number{0+}} [rating_3_star] The new count for 3-star ratings.
+ * @apiBody {Number{0+}} [rating_4_star] The new count for 4-star ratings.
+ * @apiBody {Number{0+}} [rating_5_star] The new count for 5-star ratings.
  *
- * @apiSuccess {String} entry the string
- *      "Updated: {<code>priority</code>} - [<code>name</code>] says: <code>message</code>"
+ * @apiSuccess {String} message Confirmation that the book's ratings have been updated.
  *
- * @apiError (404: Name Not Found) {String} message "Name not found"
- * @apiError (400: Missing Parameters) {String} message "Missing required information" *
+ *
+ * @apiError (404: Book Not Found) {String} message "Book title not found"
+ * @apiError (400: Missing Parameters) {String} message "At least one rating count must be provided"
+ * @apiError (400: Invalid Rating Count) {String} message "Rating counts must be non-negative integers"
  * @apiUse JSONError
  */
 messageRouter.put(
@@ -306,20 +316,20 @@ messageRouter.put(
 );
 
 /**
- * @api {delete} /message Request to remove entries by priority
+ * @api {delete} /message Request to remove book entries by ISBN
  *
- * @apiDescription Request to remove all entries of <code>priority</code>
+ * @apiDescription Request to remove all entries of <code>isbn</code>
  *
  * @apiName DeleteMessagesPri
  * @apiGroup Message
  *
- * @apiQuery {number} priority the priority [1-3] to delete all entries
+ * @apiQuery {number} isbn The ISBN of the book to remove.
  *
- * @apiSuccess {String[]} entries the aggregate of all deleted entries with <code>priority</code> as the following string:
- *      "{<code>priority</code>} - [<code>name</code>] says: <code>message</code>"
+ * @apiSuccess {String[]} entries The list of deleted entries, formatted as:
+ *      "ISBN: <code>isbn</code>, Title: <code>title</code>"
  *
- * @apiError (400: Invalid or missing Priority) {String} message "Invalid or missing Priority - please refer to documentation"
- * @apiError (404: No messages) {String} message "No Priority <code>priority</code> messages found"
+ * @apiError (400: Invalid or missing ISBN) {String} message "Invalid or missing ISBN - please refer to documentation"
+ * @apiError (404: No ISBN found) {String} message "No matching <code>isbn</code> entries found"
  */
 messageRouter.delete(
     '/',
@@ -352,19 +362,19 @@ messageRouter.delete(
 );
 
 /**
- * @api {delete} /message/:name Request to remove an entry by name
+ * @api {delete} /message/:name Request to remove a series by author
  *
- * @apiDescription Request to remove an entry associated with <code>name</code> in the DB
+ * @apiDescription Request to remove an entry associated with <code>author</code> in the DB
  *
  * @apiName DeleteMessage
  * @apiGroup Message
  *
- * @apiParam {String} name the name associated with the entry to delete
+ * @apiParam {String} author The author associated with the entries to delete
  *
- * @apiSuccess {String} entry the string
- *      "Deleted: {<code>priority</code>} - [<code>name</code>] says: <code>message</code>"
+ * @apiSuccess {String[]} entries An array of deleted book entries, each formatted as:
+ *     "Deleted: ISBN: <code>isbn</code>, Title: <code>title</code>"
  *
- * @apiError (404: Name Not Found) {String} message "Name not found"
+ * @apiError (404: Author Not Found) {String} message "Author not found"
  */
 messageRouter.delete('/:name', (request: Request, response: Response) => {
     const theQuery = 'DELETE FROM Demo  WHERE name = $1 RETURNING *';
