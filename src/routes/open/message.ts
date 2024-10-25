@@ -56,28 +56,30 @@ function mwValidNameMessageBody(
  */
 
 /**
- * @api {post} /message Request to add an entry
+ * @api {post} /library/add Request to add an entry
  *
- * @apiDescription Request to add a message and someone's name to the DB
+ * @apiDescription Request to add a book to the DB
  *
  * @apiName PostMessage
- * @apiGroup Message
+ * @apiGroup Library
  *
- * @apiBody {string} title name of the book
- * @apiBody {string} author name of the book author
- * @apiBody {number} isbn unique book identifier *unique
- * @apiBody {number} 1_star_rating number of one-star ratings
- * @apiBody {number} 2_star_rating number of two-star ratings
- * @apiBody {number} 3_star_rating number of three-star ratings
- * @apiBody {number} 4_star_rating number of four-star ratings
- * @apiBody {number} 5_star_rating number of five-star ratings
+ * @apiBody {number} ISBN ISBN *unique
+ * @apiBody {string} Title Title of the book *unique
+ * @apiBody {string} Author Author of the book
+ * @apiBody {number} [totalRatings] total number of ratings
+ * @apiBody {number} [1Star] number of 1 star reviews
+ * @apiBody {number} [2Star] number of 2 star reviews
+ * @apiBody {number} [3Star] number of 3 star reviews
+ * @apiBody {number} [4Star] number of 4 star reviews
+ * @apiBody {number} [5Star] number of 5 star reviews
  *
- * @apiSuccess (Success 201) {String} entry the string:
- *      "{<code>priority</code>} - [<code>name</code>] says: <code>message</code>"
+ * @apiSuccess (Success 201) {JSON} Book The entered book object
  *
- * @apiError (400: Name exists) {String} message "Name exists"
+ * @apiError (400: ISBN exists) {String} message "ISBN already exists"
+ * @apiError (400: Missing ISBN) {String} message "Missing ISBN - please refer to documentation"
+ * @apiError (400: Missing title) {String} message "Missing book title - please refer to documentation"
+ * @apiError (400: Missing author) {String} message "Missing book author - please refer to documentation"
  * @apiError (400: Missing Parameters) {String} message "Missing required information - please refer to documentation"
- * @apiError (400: Invalid Priority) {String} message "Invalid or missing Priority  - please refer to documentation"
  * @apiUse JSONError
  */
 messageRouter.post(
@@ -138,6 +140,161 @@ messageRouter.post(
             });
     }
 );
+
+/**
+ * @api {get} /library/retrieve/Author/:author Request to retrieve books by author's name
+ *
+ * @apiDescription Request to retrieve the information about all books written by <code>author</code>.
+ *
+ * @apiName GetMessageAuthor
+ * @apiGroup Library
+ *
+ * @apiParam {string} author the author to look up.
+ *
+ * @apiSuccess {String[]} entries the aggregate of all entries as the following string:
+ *      "{<code>title</code>} by <code>author</code> - ISBN: <code>isbn13</code>, published in <code>publication_year</code>, average rating: <code>rating_avg</code>"
+ *
+ * @apiError (404: Book Not Found) {string} message "No book associated with this author was found"
+ *
+ */
+
+/**
+ * @api {get} /library/retrieve Request to retrieve all books
+ *
+ * @apiDescription Request to retrieve the information about all books
+ *
+ * @apiName RetrieveAllBooks
+ * @apiGroup Library
+ *
+ *
+ * @apiSuccess {String[]} entries the aggregate of all entries as the following string:
+ *      "{<code>title</code>} by <code>author</code> - ISBN: <code>isbn13</code>, published in <code>publication_year</code>, average rating: <code>rating_avg</code>"
+ *
+ * @apiError (404: Books Not Found) {string} message "No books found"
+ *
+ */
+
+/**
+ * @api {get} /library/retrieve/ISBN/:ISBN Request to retrieve a book by isbn13
+ *
+ * @apiDescription Request to retrieve a specific book by <code>ISBN</code>. 
+ *
+ * @apiName GetMessageIsbn
+ * @apiGroup Library
+ *
+ * @apiParam {number} ISBN the isbn13 to look up the specific book.
+ * 
+ * @apiSuccess {Object} entry the message book object for <code>ISBN</code>
+ * @apiSuccess {number} entry.ISBN <code>ISBN</code>
+ * @apiSuccess {string} entry.author the author of the book associated <code>ISBN</code>
+ * @apiSuccess {number} entry.publication_year the published year of the book associated with <code>ISBN</code>
+ * @apiSuccess {string} entry.title the book title associated with <code>ISBN</code>
+ * @apiSuccess {number} entry.rating_avg The average rating of the book associated with <code>ISBN</code>
+
+ *
+ * @apiError (400: Invalid ISBN) {String} message "Invalid or missing ISBN  - please refer to documentation"
+ * @apiError (404: Book Not Found) {string} message "No book associated with this isbn was found"
+ *
+ */
+
+/**
+ * @api {get} /library/retrieve/title/:title Request to retrieve a book by title
+ *
+ * @apiDescription Request to retrieve a specific book by <code>title</code>. 
+ *
+ * @apiName RetrieveBookTitle
+ * @apiGroup Library
+ *
+ * @apiParam {string} title the title to look up the specific book.
+ * 
+ * @apiSuccess {Object} entry the message book object for <code>title</code>
+ * @apiSuccess {number} entry.ISBN the ISBN of the book associated with <code>title</code>
+ * @apiSuccess {string} entry.author the author of the book associated with <code>title</code>
+ * @apiSuccess {number} entry.publication_year the published year of the book associated with <code>title</code>
+ * @apiSuccess {string} entry.title the book title associated with <code>title</code>
+ * @apiSuccess {number} entry.rating_avg The average rating of the book associated with <code>title</code>
+
+ *
+ * @apiError (400: Invalid title) {String} message "Invalid or missing title  - please refer to documentation"
+ * @apiError (404: Book Not Found) {string} message "No book associated with this title was found"
+ *
+ */
+
+/**
+ * @api {get} /library/retrieve/rating/:rating Request to retrieve books by rating
+ *
+ * @apiDescription Request to retrieve the information about all books with the given rating
+ *
+ * @apiName RetrieveByRating
+ * @apiGroup Library
+ *
+ * @apiParam {number} rating the rating to look up.
+ *
+ * @apiSuccess {String[]} entries the aggregate of all entries as the following string:
+ *      "{<code>title</code>} by <code>author</code> - ISBN: <code>isbn13</code>, published in <code>publication_year</code>, average rating: <code>rating_avg</code>"
+ *
+ * @apiError (404: Book Not Found) {string} message "No book associated with this rating was found"
+ *
+ */
+
+/**
+ * @api {put} /library/update/ratings Request to update book rating
+ *
+ * @apiDescription Updates the count of star ratings or a book by title
+ *
+ * @apiName UpdateRating
+ * @apiGroup Library
+ *
+ * @apiBody {String} title The title of the book to update.
+ * @apiBody {Number{0+}} [rating_1_star] The new count for 1-star ratings.
+ * @apiBody {Number{0+}} [rating_2_star] The new count for 2-star ratings.
+ * @apiBody {Number{0+}} [rating_3_star] The new count for 3-star ratings.
+ * @apiBody {Number{0+}} [rating_4_star] The new count for 4-star ratings.
+ * @apiBody {Number{0+}} [rating_5_star] The new count for 5-star ratings.
+ *
+ * @apiSuccess {String} message Confirmation that the book's ratings have been updated.
+ *
+ *
+ * @apiError (404: Book Not Found) {String} message "Book title not found"
+ * @apiError (400: Missing Parameters) {String} message "At least one rating count must be provided"
+ * @apiError (400: Invalid Rating Count) {String} message "Rating counts must be non-negative integers"
+ * @apiUse JSONError
+ */
+
+/**
+ * @api {delete} /library/remove/ISBN/:ISBN Request to remove book entries by ISBN
+ *
+ * @apiDescription Request to remove all entries of <code>isbn</code>
+ *
+ * @apiName DeleteISBN
+ * @apiGroup Library
+ *
+ * @apiParam {number} ISBN The ISBN of the book to remove
+ *
+ *
+ *
+ * @apiSuccess {String[]} entries The list of deleted entries, formatted as:
+ *      "ISBN: <code>isbn</code>, Title: <code>title</code>"
+ *
+ * @apiError (400: Invalid or missing ISBN) {String} message "Invalid or missing ISBN - please refer to documentation"
+ * @apiError (404: No ISBN found) {String} message "No matching <code>isbn</code> entries found"
+ */
+
+/**
+ * @api {delete} /library/remove/author/:author Request to remove a series by author
+ *
+ * @apiDescription Request to remove an entry associated with <code>author</code> in the DB
+ *
+ * @apiName DeleteAuthor
+ * @apiGroup Library
+ *
+ * @apiParam {String} author The author associated with the entries to delete
+ *
+ * @apiSuccess {String} entries A string of the deleted book entry, formatted as:
+ *     "Deleted: ISBN: <code>isbn</code>, Title: <code>title</code>"
+ *
+ * @apiError (404: Author Not Found) {String} message "Author not found"
+ */
 
 /**
  * @api {get} /message/all Request to all retrieve entries
@@ -262,26 +419,21 @@ messageRouter.get('/:name', (request: Request, response: Response) => {
 });
 
 /**
- * @api {put} /message Request to update book rating
+ * @api {put} /message Request to change an entry
  *
- * @apiDescription Updates the count of star ratings or a book by title
+ * @apiDescription Request to replace the message entry in the DB for name
  *
  * @apiName PutMessage
  * @apiGroup Message
  *
- * @apiBody {String} title The title of the book to update.
- * @apiBody {Number{0+}} [rating_1_star] The new count for 1-star ratings.
- * @apiBody {Number{0+}} [rating_2_star] The new count for 2-star ratings.
- * @apiBody {Number{0+}} [rating_3_star] The new count for 3-star ratings.
- * @apiBody {Number{0+}} [rating_4_star] The new count for 4-star ratings.
- * @apiBody {Number{0+}} [rating_5_star] The new count for 5-star ratings.
+ * @apiBody {String} name the name entry
+ * @apiBody {String} message a message to replace with the associated name
  *
- * @apiSuccess {String} message Confirmation that the book's ratings have been updated.
+ * @apiSuccess {String} entry the string
+ *      "Updated: {<code>priority</code>} - [<code>name</code>] says: <code>message</code>"
  *
- *
- * @apiError (404: Book Not Found) {String} message "Book title not found"
- * @apiError (400: Missing Parameters) {String} message "At least one rating count must be provided"
- * @apiError (400: Invalid Rating Count) {String} message "Rating counts must be non-negative integers"
+ * @apiError (404: Name Not Found) {String} message "Name not found"
+ * @apiError (400: Missing Parameters) {String} message "Missing required information" *
  * @apiUse JSONError
  */
 messageRouter.put(
@@ -316,20 +468,20 @@ messageRouter.put(
 );
 
 /**
- * @api {delete} /message Request to remove book entries by ISBN
+ * @api {delete} /message Request to remove entries by priority
  *
- * @apiDescription Request to remove all entries of <code>isbn</code>
+ * @apiDescription Request to remove all entries of <code>priority</code>
  *
  * @apiName DeleteMessagesPri
  * @apiGroup Message
  *
- * @apiQuery {number} isbn The ISBN of the book to remove.
+ * @apiQuery {number} priority the priority [1-3] to delete all entries
  *
- * @apiSuccess {String[]} entries The list of deleted entries, formatted as:
- *      "ISBN: <code>isbn</code>, Title: <code>title</code>"
+ * @apiSuccess {String[]} entries the aggregate of all deleted entries with <code>priority</code> as the following string:
+ *      "{<code>priority</code>} - [<code>name</code>] says: <code>message</code>"
  *
- * @apiError (400: Invalid or missing ISBN) {String} message "Invalid or missing ISBN - please refer to documentation"
- * @apiError (404: No ISBN found) {String} message "No matching <code>isbn</code> entries found"
+ * @apiError (400: Invalid or missing Priority) {String} message "Invalid or missing Priority - please refer to documentation"
+ * @apiError (404: No messages) {String} message "No Priority <code>priority</code> messages found"
  */
 messageRouter.delete(
     '/',
@@ -362,19 +514,19 @@ messageRouter.delete(
 );
 
 /**
- * @api {delete} /message/:name Request to remove a series by author
+ * @api {delete} /message/:name Request to remove an entry by name
  *
- * @apiDescription Request to remove an entry associated with <code>author</code> in the DB
+ * @apiDescription Request to remove an entry associated with <code>name</code> in the DB
  *
  * @apiName DeleteMessage
  * @apiGroup Message
  *
- * @apiParam {String} author The author associated with the entries to delete
+ * @apiParam {String} name the name associated with the entry to delete
  *
- * @apiSuccess {String[]} entries An array of deleted book entries, each formatted as:
- *     "Deleted: ISBN: <code>isbn</code>, Title: <code>title</code>"
+ * @apiSuccess {String} entry the string
+ *      "Deleted: {<code>priority</code>} - [<code>name</code>] says: <code>message</code>"
  *
- * @apiError (404: Author Not Found) {String} message "Author not found"
+ * @apiError (404: Name Not Found) {String} message "Name not found"
  */
 messageRouter.delete('/:name', (request: Request, response: Response) => {
     const theQuery = 'DELETE FROM Demo  WHERE name = $1 RETURNING *';
