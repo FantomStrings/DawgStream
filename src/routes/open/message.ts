@@ -215,8 +215,7 @@ messageRouter.get(
 /**
  * @api {get} /message/:author Request to retrieve books by author's name
  *
- * @apiDescription Request to retrieve the information about all books written by this
- * <code>author</code>.
+ * @apiDescription Request to retrieve the information about all books written by <code>author</code>.
  *
  * @apiName GetMessageAuthor
  * @apiGroup Message
@@ -224,28 +223,28 @@ messageRouter.get(
  * @apiParam {string} author the author to look up.
  *
  * @apiSuccess {String[]} entries the aggregate of all entries as the following string:
- *      "{<code>title</code>} by <code>author</code> - ISBN: <code>isbn</code>, published in <code>publication_year</code>, average rating: <code>rating_avg</code>"
+ *      "{<code>title</code>} by <code>author</code> - ISBN: <code>isbn13</code>, published in <code>publication_year</code>, average rating: <code>rating_avg</code>"
  *
  * @apiError (404: Book Not Found) {string} message "No book associated with this author was found"
  *
  */
 
 /**
- * @api {get} /message Request to retrieve a book by isbn
+ * @api {get} /message Request to retrieve a book by isbn13
  *
- * @apiDescription Request to retrieve a specific book by <code>isbn</code>. 
+ * @apiDescription Request to retrieve a specific book by <code>isbn13</code>. 
  *
  * @apiName GetMessageIsbn
  * @apiGroup Message
  *
- * @apiQuery {number} isbn the isbn to look up the specific book.
+ * @apiQuery {number} isbn13 the isbn13 to look up the specific book.
  * 
- * @apiSuccess {Object} entry the message book object for <code>isbn</code>
- * @apiSuccess {number} entry.isbn <code>isbn</code>
- * @apiSuccess {string} entry.author the author of the book associated <code>isbn</code>
- * @apiSuccess {number} entry.publication_year the published year of the book associated with <code>isbn</code>
- * @apiSuccess {string} entry.title the book title associated with <code>isbn</code>
- * @apiSuccess {number} entry.rating_avg The average rating of the book associated with <code>isbn</code>
+ * @apiSuccess {Object} entry the message book object for <code>isbn13</code>
+ * @apiSuccess {number} entry.isbn13 <code>isbn13</code>
+ * @apiSuccess {string} entry.author the author of the book associated <code>isbn13</code>
+ * @apiSuccess {number} entry.publication_year the published year of the book associated with <code>isbn13</code>
+ * @apiSuccess {string} entry.title the book title associated with <code>isbn13</code>
+ * @apiSuccess {number} entry.rating_avg The average rating of the book associated with <code>isbn13</code>
 
  *
  * @apiError (400: Invalid ISBN) {String} message "Invalid or missing ISBN  - please refer to documentation"
