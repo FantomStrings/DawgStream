@@ -56,23 +56,30 @@ function mwValidNameMessageBody(
  */
 
 /**
- * @api {post} /message Request to add an entry
+ * @api {post} /library/add Request to add an entry
  *
- * @apiDescription Request to add a message and someone's name to the DB
+ * @apiDescription Request to add a book to the DB
  *
  * @apiName PostMessage
- * @apiGroup Message
+ * @apiGroup Library
  *
- * @apiBody {string} name someone's name *unique
- * @apiBody {string} message a message to store with the name
- * @apiBody {number} priority a message priority [1-3]
+ * @apiBody {number} ISBN ISBN *unique
+ * @apiBody {string} Title Title of the book *unique
+ * @apiBody {string} Author Author of the book
+ * @apiBody {number} totalRatings total number of ratings
+ * @apiBody {number} 1Star number of 1 star reviews
+ * @apiBody {number} 2Star number of 2 star reviews
+ * @apiBody {number} 3Star number of 3 star reviews
+ * @apiBody {number} 4Star number of 4 star reviews
+ * @apiBody {number} 5Star number of 5 star reviews
  *
- * @apiSuccess (Success 201) {String} entry the string:
- *      "{<code>priority</code>} - [<code>name</code>] says: <code>message</code>"
+ * @apiSuccess (Success 201) {JSON} Book The entered book object
  *
- * @apiError (400: Name exists) {String} message "Name exists"
+ * @apiError (400: ISBN exists) {String} message "ISBN already exists"
+ * @apiError (400: Missing ISBN) {String} message "ISBN - please refer to documentation"
+ * @apiError (400: Missing title) {String} message "Missing book title - please refer to documentation"
+ * @apiError (400: Missing author) {String} message "Missing book author - please refer to documentation"
  * @apiError (400: Missing Parameters) {String} message "Missing required information - please refer to documentation"
- * @apiError (400: Invalid Priority) {String} message "Invalid or missing Priority  - please refer to documentation"
  * @apiUse JSONError
  */
 messageRouter.post(
