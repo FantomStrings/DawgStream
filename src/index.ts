@@ -6,7 +6,7 @@ import { routes } from './routes';
 
 const app: Express = express();
 
-const PORT: number = parseInt(process.env.PORT) || 4001;
+const PORT: number = parseInt(process.env.PORT) || 4000;
 
 app.use(cors());
 
@@ -18,6 +18,7 @@ app.use(express.json());
 app.use(routes);
 
 app.get('/', (request: Request, response: Response) => {
+    console.log('This can only be seen in docker');
     response.send('<h1>Hello World!</h1>');
 });
 

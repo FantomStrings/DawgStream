@@ -67,6 +67,7 @@ function mwValidNameMessageBody(
  * @apiBody {string} message a message to store with the name
  * @apiBody {number} priority a message priority [1-3]
  *
+ *
  * @apiSuccess (Success 201) {String} entry the string:
  *      "{<code>priority</code>} - [<code>name</code>] says: <code>message</code>"
  *
@@ -212,6 +213,47 @@ messageRouter.get(
 );
 
 /**
+ * @api {get} /message/:author Request to retrieve books by author's name
+ *
+ * @apiDescription Request to retrieve the information about all books written by this
+ * <code>author</code>.
+ *
+ * @apiName GetMessageAuthor
+ * @apiGroup Message
+ *
+ * @apiParam {string} author the author to look up.
+ *
+ * @apiSuccess {String[]} entries the aggregate of all entries as the following string:
+ *      "{<code>title</code>} by <code>author</code> - ISBN: <code>isbn</code>, published in <code>publication_year</code>, average rating: <code>rating_avg</code>"
+ *
+ * @apiError (404: Book Not Found) {string} message "No book associated with this author was found"
+ *
+ */
+
+/**
+ * @api {get} /message Request to retrieve a book by isbn
+ *
+ * @apiDescription Request to retrieve a specific book by <code>isbn</code>. 
+ *
+ * @apiName GetMessageIsbn
+ * @apiGroup Message
+ *
+ * @apiQuery {number} isbn the isbn to look up the specific book.
+ * 
+ * @apiSuccess {Object} entry the message book object for <code>isbn</code>
+ * @apiSuccess {number} entry.isbn <code>isbn</code>
+ * @apiSuccess {string} entry.author the author of the book associated <code>isbn</code>
+ * @apiSuccess {number} entry.publication_year the published year of the book associated with <code>isbn</code>
+ * @apiSuccess {string} entry.title the book title associated with <code>isbn</code>
+ * @apiSuccess {number} entry.rating_avg The average rating of the book associated with <code>isbn</code>
+
+ *
+ * @apiError (400: Invalid ISBN) {String} message "Invalid or missing ISBN  - please refer to documentation"
+ * @apiError (404: Book Not Found) {string} message "No book associated with this isbn was found"
+ *
+ */
+
+/**
  * @api {get} /message/:name Request to retrieve an entry by name
  *
  * @apiDescription Request to retrieve the complete entry for <code>name</code>.
@@ -232,7 +274,7 @@ messageRouter.get(
  */
 messageRouter.get('/:name', (request: Request, response: Response) => {
     const theQuery = 'SELECT name, message, priority FROM Demo WHERE name = $1';
-    let values = [request.params.name];
+    const values = [request.params.name];
 
     pool.query(theQuery, values)
         .then((result) => {
