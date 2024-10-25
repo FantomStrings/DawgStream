@@ -66,12 +66,12 @@ function mwValidNameMessageBody(
  * @apiBody {number} ISBN ISBN *unique
  * @apiBody {string} Title Title of the book *unique
  * @apiBody {string} Author Author of the book
- * @apiBody {number} totalRatings total number of ratings
- * @apiBody {number} 1Star number of 1 star reviews
- * @apiBody {number} 2Star number of 2 star reviews
- * @apiBody {number} 3Star number of 3 star reviews
- * @apiBody {number} 4Star number of 4 star reviews
- * @apiBody {number} 5Star number of 5 star reviews
+ * @apiBody {number} [totalRatings] total number of ratings
+ * @apiBody {number} [1Star] number of 1 star reviews
+ * @apiBody {number} [2Star] number of 2 star reviews
+ * @apiBody {number} [3Star] number of 3 star reviews
+ * @apiBody {number} [4Star] number of 4 star reviews
+ * @apiBody {number} [5Star] number of 5 star reviews
  *
  * @apiSuccess (Success 201) {JSON} Book The entered book object
  *
@@ -159,6 +159,22 @@ messageRouter.post(
  */
 
 /**
+ * @api {get} /library/retrieve Request to retrieve all books
+ *
+ * @apiDescription Request to retrieve the information about all books
+ *
+ * @apiName RetrieveAllBooks
+ * @apiGroup Library
+ *
+ *
+ * @apiSuccess {String[]} entries the aggregate of all entries as the following string:
+ *      "{<code>title</code>} by <code>author</code> - ISBN: <code>isbn13</code>, published in <code>publication_year</code>, average rating: <code>rating_avg</code>"
+ *
+ * @apiError (404: Books Not Found) {string} message "No books found"
+ *
+ */
+
+/**
  * @api {get} /library/retrieve/ISBN/:ISBN Request to retrieve a book by isbn13
  *
  * @apiDescription Request to retrieve a specific book by <code>ISBN</code>. 
@@ -178,6 +194,46 @@ messageRouter.post(
  *
  * @apiError (400: Invalid ISBN) {String} message "Invalid or missing ISBN  - please refer to documentation"
  * @apiError (404: Book Not Found) {string} message "No book associated with this isbn was found"
+ *
+ */
+
+/**
+ * @api {get} /library/retrieve/title/:title Request to retrieve a book by title
+ *
+ * @apiDescription Request to retrieve a specific book by <code>title</code>. 
+ *
+ * @apiName RetrieveBookTitle
+ * @apiGroup Library
+ *
+ * @apiParam {string} title the title to look up the specific book.
+ * 
+ * @apiSuccess {Object} entry the message book object for <code>title</code>
+ * @apiSuccess {number} entry.ISBN the ISBN of the book associated with <code>title</code>
+ * @apiSuccess {string} entry.author the author of the book associated with <code>title</code>
+ * @apiSuccess {number} entry.publication_year the published year of the book associated with <code>title</code>
+ * @apiSuccess {string} entry.title the book title associated with <code>title</code>
+ * @apiSuccess {number} entry.rating_avg The average rating of the book associated with <code>title</code>
+
+ *
+ * @apiError (400: Invalid title) {String} message "Invalid or missing title  - please refer to documentation"
+ * @apiError (404: Book Not Found) {string} message "No book associated with this title was found"
+ *
+ */
+
+/**
+ * @api {get} /library/retrieve/rating/:rating Request to retrieve books by rating
+ *
+ * @apiDescription Request to retrieve the information about all books with the given rating
+ *
+ * @apiName RetrieveByRating
+ * @apiGroup Library
+ *
+ * @apiParam {number} rating the rating to look up.
+ *
+ * @apiSuccess {String[]} entries the aggregate of all entries as the following string:
+ *      "{<code>title</code>} by <code>author</code> - ISBN: <code>isbn13</code>, published in <code>publication_year</code>, average rating: <code>rating_avg</code>"
+ *
+ * @apiError (404: Book Not Found) {string} message "No book associated with this rating was found"
  *
  */
 
