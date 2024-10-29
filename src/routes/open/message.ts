@@ -66,6 +66,7 @@ function mwValidNameMessageBody(
  * @apiBody {number} ISBN ISBN *unique
  * @apiBody {string} Title Title of the book *unique
  * @apiBody {string} Author Author of the book
+ * @apiBody {number} Date The publication year
  * @apiBody {number} [totalRatings] total number of ratings
  * @apiBody {number} [1Star] number of 1 star reviews
  * @apiBody {number} [2Star] number of 2 star reviews
@@ -79,6 +80,7 @@ function mwValidNameMessageBody(
  * @apiError (400: Missing ISBN) {String} message "Missing ISBN - please refer to documentation"
  * @apiError (400: Missing title) {String} message "Missing book title - please refer to documentation"
  * @apiError (400: Missing author) {String} message "Missing book author - please refer to documentation"
+ * @apiError (400: Missing date) {String} message "Missing publication date - please refer to documentation"
  * @apiError (400: Missing Parameters) {String} message "Missing required information - please refer to documentation"
  * @apiUse JSONError
  */
