@@ -66,6 +66,7 @@ function mwValidNameMessageBody(
  * @apiBody {number} ISBN ISBN *unique
  * @apiBody {string} Title Title of the book *unique
  * @apiBody {string} Author Author of the book
+ * @apiBody {number} Date The publication year
  * @apiBody {number} [totalRatings] total number of ratings
  * @apiBody {number} [1Star] number of 1 star reviews
  * @apiBody {number} [2Star] number of 2 star reviews
@@ -79,6 +80,7 @@ function mwValidNameMessageBody(
  * @apiError (400: Missing ISBN) {String} message "Missing ISBN - please refer to documentation"
  * @apiError (400: Missing title) {String} message "Missing book title - please refer to documentation"
  * @apiError (400: Missing author) {String} message "Missing book author - please refer to documentation"
+ * @apiError (400: Missing date) {String} message "Missing publication date - please refer to documentation"
  * @apiError (400: Missing Parameters) {String} message "Missing required information - please refer to documentation"
  * @apiUse JSONError
  */
@@ -155,6 +157,23 @@ messageRouter.post(
  *      "{<code>title</code>} by <code>author</code> - ISBN: <code>isbn13</code>, published in <code>publication_year</code>, average rating: <code>rating_avg</code>"
  *
  * @apiError (404: Book Not Found) {string} message "No book associated with this author was found"
+ *
+ */
+
+/**
+ * @api {get} /library/retrieve/Date/:date Request to retrieve books by original publication date
+ *
+ * @apiDescription Request to retrieve the information about all books published in <code>date</code>.
+ *
+ * @apiName GetMessageDate
+ * @apiGroup Library
+ *
+ * @apiParam {number} date the publication year to look up.
+ *
+ * @apiSuccess {String[]} entries the aggregate of all entries as the following string:
+ *      "{<code>title</code>} by <code>author</code> - ISBN: <code>isbn13</code>, published in <code>publication_year</code>, average rating: <code>rating_avg</code>"
+ *
+ * @apiError (404: Book Not Found) {string} message "No book associated with this publication year was found"
  *
  */
 
