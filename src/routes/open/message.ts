@@ -159,6 +159,23 @@ messageRouter.post(
  */
 
 /**
+ * @api {get} /library/retrieve/Date/:date Request to retrieve books by original publication date
+ *
+ * @apiDescription Request to retrieve the information about all books published in <code>date</code>.
+ *
+ * @apiName GetMessageDate
+ * @apiGroup Library
+ *
+ * @apiParam {number} date the publication year to look up.
+ *
+ * @apiSuccess {String[]} entries the aggregate of all entries as the following string:
+ *      "{<code>title</code>} by <code>author</code> - ISBN: <code>isbn13</code>, published in <code>publication_year</code>, average rating: <code>rating_avg</code>"
+ *
+ * @apiError (404: Book Not Found) {string} message "No book associated with this publication year was found"
+ *
+ */
+
+/**
  * @api {get} /library/retrieve Request to retrieve all books
  *
  * @apiDescription Request to retrieve the information about all books
