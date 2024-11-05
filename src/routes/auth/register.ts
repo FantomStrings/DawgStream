@@ -111,13 +111,11 @@ registerRouter.post(
     (request: Request, response: Response, next: NextFunction) => {
         if (isValidPhone(request.body.phone)) {
             next();
-            return;
         } else {
             response.status(400).send({
                 message:
                     'Invalid or missing phone number  - please refer to documentation',
             });
-            return;
         }
     },
     (request: Request, response: Response, next: NextFunction) => {
@@ -151,7 +149,7 @@ registerRouter.post(
             request.body.phone,
             request.body.role,
         ];
-        console.dir({ ...request.body, password: '******' });
+        // console.dir({ ...request.body, password: '******' });
         pool.query(theQuery, values)
             .then((result) => {
                 //stash the account_id into the request object to be used in the next function
@@ -202,6 +200,7 @@ registerRouter.post(
                         expiresIn: '14 days', // expires in 14 days
                     }
                 );
+                console.dir({ ...request.body, password: '******' });
                 //We successfully added the user!
                 response.status(201).send({
                     accessToken,
