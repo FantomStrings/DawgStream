@@ -7,9 +7,12 @@ const messageRouter: Router = express.Router();
 
 const isStringProvided = validationFunctions.isStringProvided;
 
+/*const format = (resultRow) =>
+    `{${resultRow.priority}} - [${resultRow.name}] says: ${resultRow.message}`;*/
 const format = (resultRow) =>
-    `{${resultRow.priority}} - [${resultRow.name}] says: ${resultRow.message}`;
-
+    `{${resultRow.ISBN}} - [${resultRow.Title}]  [${resultRow.Author}] [${resultRow.Author}] [${resultRow.Date}]
+    [${resultRow.totalRatings}] [${resultRow.oneStar}] [${resultRow.twoStar}] [${resultRow.threeStar}] [${resultRow.fourStar}] 
+    [${resultRow.fiveStar}] [${resultRow.averageRating}]`;
 function mwValidPriorityQuery(
     request: Request,
     response: Response,
@@ -229,7 +232,7 @@ messageRouter.post(
                 // result.rows array are the records returned from the SQL statement.
                 // An INSERT statement will return a single row, the row that was inserted.
                 response.status(201).send({
-                    entry: format(result.rows[0]),
+                    entry: format(result.rows[0]), //might need to change this?
                 });
             })
             .catch((error) => {
