@@ -34,6 +34,26 @@ function mwValidPriorityQuery(
     }
 }
 
+function mwValidISBNQuery(
+    request: Request,
+    response: Response,
+    next: NextFunction
+) {
+    const ISBN: string = request.query.ISBN as string;
+    if (
+        validationFunctions.isNumberProvided(ISBN) /*&&
+        parseInt(priority) >= 1 &&
+        parseInt(priority) <= 3*/
+    ) {
+        next();
+    } else {
+        console.error('Invalid or missing ISBN');
+        response.status(400).send({
+            message: 'Invalid or missing ISBN - please refer to documentation',
+        });
+    }
+}
+
 function mwValidNameMessageBody(
     request: Request,
     response: Response,
@@ -471,6 +491,35 @@ messageRouter.post(
  * @apiError (400: Invalid or missing ISBN) {String} message "Invalid or missing ISBN - please refer to documentation"
  * @apiError (404: No ISBN found) {String} message "No matching <code>isbn</code> entries found"
  */
+messageRouter.delete(
+    '/',
+    mwValidISBNQuery,
+    (request: Request, response: Response) => {
+        const theQuery = 'DELETE FROM Demo WHERE ISBN = $1 RETURNING *'; //Remember to change table name!
+        const values = [request.query.ISBN];
+
+        pool.query(theQuery, values)
+            .then((result) => {
+                if (result.rowCount > 0) {
+                    response.send({
+                        entries: result.rows.map(format),
+                    });
+                } else {
+                    response.status(404).send({
+                        message: `No book for ISBN ${request.query.ISBN} found`,
+                    });
+                }
+            })
+            .catch((error) => {
+                //log the error
+                console.error('DB Query error on DELETE by ISBN');
+                console.error(error);
+                response.status(500).send({
+                    message: 'server error - contact support',
+                });
+            });
+    }
+);
 
 /**
  * @api {delete} /library/remove/author/:author Request to remove a series by author
