@@ -116,9 +116,10 @@ messageRouter.post(
         ) {
             //next();
         } else {
-            console.error('Missing ISBN');
+            console.error('Invalid ISBN');
             response.status(400).send({
-                message: 'Missing ISBN - please refer to documentation',
+                message:
+                    'Invalid or missing ISBN - please refer to documentation',
             });
         }
         const Title: string = request.body.Title as string;
@@ -130,9 +131,10 @@ messageRouter.post(
         ) {
             //next();
         } else {
-            console.error('Missing book title');
+            console.error('Invalid book title');
             response.status(400).send({
-                message: 'Missing book title - please refer to documentation',
+                message:
+                    'Invalid or missing book title - please refer to documentation',
             });
         }
         const Author: string = request.body.Author as string;
@@ -144,9 +146,10 @@ messageRouter.post(
         ) {
             //next();
         } else {
-            console.error('Missing book Author');
+            console.error('Invalid book Author');
             response.status(400).send({
-                message: 'Missing book Author - please refer to documentation',
+                message:
+                    'Invalid or missing book Author - please refer to documentation',
             });
         }
         const Date: string = request.body.Date as string;
@@ -158,10 +161,10 @@ messageRouter.post(
         ) {
             next();
         } else {
-            console.error('Missing publiciation date');
+            console.error('Invalid publiciation date');
             response.status(400).send({
                 message:
-                    'Missing publication date - please refer to documentation',
+                    'Invalid or missing publication date - please refer to documentation',
             });
         }
         //Figure out these optionals, unsure how we check these.
