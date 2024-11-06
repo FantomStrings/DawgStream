@@ -87,20 +87,20 @@ function mwValidNameLibraryBody(
  * @apiBody {string} Author Author of the book
  * @apiBody {number} Date The publication year
  * @apiBody {number} [totalRatings] total number of ratings
- * @apiBody {number} [1Star] number of 1 star reviews
- * @apiBody {number} [2Star] number of 2 star reviews
- * @apiBody {number} [3Star] number of 3 star reviews
- * @apiBody {number} [4Star] number of 4 star reviews
- * @apiBody {number} [5Star] number of 5 star reviews
+ * @apiBody {number} [oneStar] number of 1 star reviews
+ * @apiBody {number} [twoStar] number of 2 star reviews
+ * @apiBody {number} [threeStar] number of 3 star reviews
+ * @apiBody {number} [fourStar] number of 4 star reviews
+ * @apiBody {number} [fiveStar] number of 5 star reviews
  *
  * @apiSuccess (Success 201) {JSON} Book The entered book object
  *
  * @apiError (400: ISBN exists) {String} message "ISBN already exists"
- * @apiError (400: Missing ISBN) {String} message "Missing ISBN - please refer to documentation"
- * @apiError (400: Missing title) {String} message "Missing book title - please refer to documentation"
- * @apiError (400: Missing author) {String} message "Missing book author - please refer to documentation"
- * @apiError (400: Missing date) {String} message "Missing publication date - please refer to documentation"
- * @apiError (400: Missing Parameters) {String} message "Missing required information - please refer to documentation"
+ * @apiError (400: Invalid ISBN) {String} message "Invalid or Missing ISBN - please refer to documentation"
+ * @apiError (400: Invalid title) {String} message "Invalid or Missing book title - please refer to documentation"
+ * @apiError (400: Invalid author) {String} message "Invalid or Missing book author - please refer to documentation"
+ * @apiError (400: Invalid date) {String} message "Invalid or Missing publication date - please refer to documentation"
+ * @apiError (400: Invalid Parameters) {String} message "Invalid or Missing required information - please refer to documentation"
  * @apiUse JSONError
  */
 messageRouter.post(
@@ -168,6 +168,7 @@ messageRouter.post(
 
         next();
     },
+    //Method to calculate average rating.
     (request: Request, response: Response, next: NextFunction) => {
         //generate average
         //Figure out these optionals, unsure how we check these.
