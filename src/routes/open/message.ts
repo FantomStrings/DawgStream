@@ -7,9 +7,12 @@ const messageRouter: Router = express.Router();
 
 const isStringProvided = validationFunctions.isStringProvided;
 
+/*const format = (resultRow) =>
+    `{${resultRow.priority}} - [${resultRow.name}] says: ${resultRow.message}`;*/
 const format = (resultRow) =>
-    `{${resultRow.priority}} - [${resultRow.name}] says: ${resultRow.message}`;
-
+    `{${resultRow.ISBN}} - [${resultRow.Title}]  [${resultRow.Author}] [${resultRow.Author}] [${resultRow.Date}]
+    [${resultRow.totalRatings}] [${resultRow.oneStar}] [${resultRow.twoStar}] [${resultRow.threeStar}] [${resultRow.fourStar}] 
+    [${resultRow.fiveStar}] [${resultRow.averageRating}]`;
 function mwValidPriorityQuery(
     request: Request,
     response: Response,
@@ -31,7 +34,46 @@ function mwValidPriorityQuery(
     }
 }
 
+function mwValidISBNQuery(
+    request: Request,
+    response: Response,
+    next: NextFunction
+) {
+    const ISBN: string = request.query.ISBN as string;
+    if (
+        validationFunctions.isNumberProvided(ISBN) /*&&
+        parseInt(priority) >= 1 &&
+        parseInt(priority) <= 3*/
+    ) {
+        next();
+    } else {
+        console.error('Invalid or missing ISBN');
+        response.status(400).send({
+            message: 'Invalid or missing ISBN - please refer to documentation',
+        });
+    }
+}
+
 function mwValidNameMessageBody(
+    request: Request,
+    response: Response,
+    next: NextFunction
+) {
+    if (
+        isStringProvided(request.body.name) &&
+        isStringProvided(request.body.message)
+    ) {
+        next();
+    } else {
+        console.error('Missing required information');
+        response.status(400).send({
+            message:
+                'Missing required information - please refer to documentation',
+        });
+    }
+}
+
+function mwValidNameLibraryBody(
     request: Request,
     response: Response,
     next: NextFunction
@@ -56,27 +98,186 @@ function mwValidNameMessageBody(
  */
 
 /**
- * @api {post} /message Request to add an entry
+ * @api {post} /library/add Request to add an entry
  *
- * @apiDescription Request to add a message and someone's name to the DB
+ * @apiDescription Request to add a book to the DB
  *
  * @apiName PostMessage
- * @apiGroup Message
+ * @apiGroup Library
  *
- * @apiBody {string} name someone's name *unique
- * @apiBody {string} message a message to store with the name
- * @apiBody {number} priority a message priority [1-3]
+ * @apiBody {number} ISBN ISBN *unique
+ * @apiBody {string} Title Title of the book *unique
+ * @apiBody {string} Author Author of the book
+ * @apiBody {number} Date The publication year
+ * @apiBody {number} [totalRatings] total number of ratings
+ * @apiBody {number} [oneStar] number of 1 star reviews
+ * @apiBody {number} [twoStar] number of 2 star reviews
+ * @apiBody {number} [threeStar] number of 3 star reviews
+ * @apiBody {number} [fourStar] number of 4 star reviews
+ * @apiBody {number} [fiveStar] number of 5 star reviews
  *
+ * @apiSuccess (Success 201) {JSON} Book The entered book object
  *
- * @apiSuccess (Success 201) {String} entry the string:
- *      "{<code>priority</code>} - [<code>name</code>] says: <code>message</code>"
- *
- * @apiError (400: Name exists) {String} message "Name exists"
- * @apiError (400: Missing Parameters) {String} message "Missing required information - please refer to documentation"
- * @apiError (400: Invalid Priority) {String} message "Invalid or missing Priority  - please refer to documentation"
+ * @apiError (400: ISBN exists) {String} message "ISBN already exists"
+ * @apiError (400: Invalid ISBN) {String} message "Invalid or Missing ISBN - please refer to documentation"
+ * @apiError (400: Invalid title) {String} message "Invalid or Missing book title - please refer to documentation"
+ * @apiError (400: Invalid author) {String} message "Invalid or Missing book author - please refer to documentation"
+ * @apiError (400: Invalid date) {String} message "Invalid or Missing publication date - please refer to documentation"
+ * @apiError (400: Invalid Parameters) {String} message "Invalid or Missing required information - please refer to documentation"
  * @apiUse JSONError
  */
 messageRouter.post(
+    '/',
+    mwValidNameMessageBody,
+    (request: Request, response: Response, next: NextFunction) => {
+        const ISBN: string = request.body.ISBN as string;
+        if (
+            /*validationFunctions.isNumberProvided(priority) &&
+            parseInt(priority) >= 1 &&
+            parseInt(priority) <= 3*/
+            validationFunctions.isNumberProvided(ISBN)
+        ) {
+            //next();
+        } else {
+            console.error('Invalid ISBN');
+            response.status(400).send({
+                message:
+                    'Invalid or missing ISBN - please refer to documentation',
+            });
+        }
+        const Title: string = request.body.Title as string;
+        if (
+            /*validationFunctions.isNumberProvided(priority) &&
+            parseInt(priority) >= 1 &&
+            parseInt(priority) <= 3*/
+            validationFunctions.isStringProvided(Title)
+        ) {
+            //next();
+        } else {
+            console.error('Invalid book title');
+            response.status(400).send({
+                message:
+                    'Invalid or missing book title - please refer to documentation',
+            });
+        }
+        const Author: string = request.body.Author as string;
+        if (
+            /*validationFunctions.isNumberProvided(priority) &&
+            parseInt(priority) >= 1 &&
+            parseInt(priority) <= 3*/
+            validationFunctions.isStringProvided(Author)
+        ) {
+            //next();
+        } else {
+            console.error('Invalid book Author');
+            response.status(400).send({
+                message:
+                    'Invalid or missing book Author - please refer to documentation',
+            });
+        }
+        const Date: string = request.body.Date as string;
+        if (
+            /*validationFunctions.isNumberProvided(priority) &&
+            parseInt(priority) >= 1 &&
+            parseInt(priority) <= 3*/
+            validationFunctions.isNumberProvided(Date)
+        ) {
+            next();
+        } else {
+            console.error('Invalid publiciation date');
+            response.status(400).send({
+                message:
+                    'Invalid or missing publication date - please refer to documentation',
+            });
+        }
+        //Figure out these optionals, unsure how we check these.
+
+        next();
+    },
+    //Method to calculate average rating.
+    (request: Request, response: Response, next: NextFunction) => {
+        //generate average
+        //Figure out these optionals, unsure how we check these.
+        //figure out if this as number works lmao
+        const totalRatings: number = request.body.totalRatings as number;
+        const oneStar: number = request.body.oneStar as number;
+        const twoStar: number = request.body.twoStar as number;
+        const threeStar: number = request.body.threeStar as number;
+        const fourStar: number = request.body.fourStar as number;
+        const fiveStar: number = request.body.fiveStar as number;
+        if (
+            validationFunctions.isNumberProvided(totalRatings) &&
+            validationFunctions.isNumberProvided(oneStar) &&
+            validationFunctions.isNumberProvided(twoStar) &&
+            validationFunctions.isNumberProvided(threeStar) &&
+            validationFunctions.isNumberProvided(fourStar) &&
+            validationFunctions.isNumberProvided(twoStar)
+        ) {
+            const averageRating: number =
+                (fiveStar * 5 +
+                    fourStar * 4 +
+                    threeStar * 3 +
+                    twoStar * 2 +
+                    oneStar) /
+                totalRatings;
+        } else {
+            const averageRating: number = null;
+        }
+        next();
+    },
+    (averageRating: number, request: Request, response: Response) => {
+        //We're using placeholders ($1, $2, $3) in the SQL query string to avoid SQL Injection
+        //If you want to read more: https://stackoverflow.com/a/8265319
+
+        //NOTE: what are we calling the table?
+        //NOTE: how are we handling the optional reviews?
+        const theQuery = //what do we want this to return?
+            'INSERT INTO DEMO(ISBN, Title, Author, Date, totalRatings, 1Star, 2Star, 3Star, 4Star, 5Star, averageRating) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *';
+        const values = [
+            request.body.ISBN,
+            request.body.Title,
+            request.body.Author,
+            request.body.Date,
+            request.body.totalRatings,
+            request.body.oneStar,
+            request.body.twoStar,
+            request.body.threeStar,
+            request.body.fourStar,
+            request.body.fiveStar,
+            request.body.averageRating, //Is this where we want this?
+        ];
+
+        pool.query(theQuery, values)
+            .then((result) => {
+                // result.rows array are the records returned from the SQL statement.
+                // An INSERT statement will return a single row, the row that was inserted.
+                response.status(201).send({
+                    entry: format(result.rows[0]), //might need to change this?
+                });
+            })
+            .catch((error) => {
+                //Change how ends with is caught, since we have two uniques.
+                if (
+                    error.detail != undefined &&
+                    (error.detail as string).endsWith('already exists.')
+                ) {
+                    console.error('Name exists');
+                    response.status(400).send({
+                        message: 'Name exists',
+                    });
+                } else {
+                    //log the error
+                    console.error('DB Query error on POST');
+                    console.error(error);
+                    response.status(500).send({
+                        message: 'server error - contact support',
+                    });
+                }
+            });
+    }
+);
+
+/*messageRouter.post(
     '/',
     mwValidNameMessageBody,
     (request: Request, response: Response, next: NextFunction) => {
@@ -133,7 +334,7 @@ messageRouter.post(
                 }
             });
     }
-);
+);*/
 
 /**
  * @api {post} /library/add Request to add an entry
@@ -443,6 +644,35 @@ messageRouter.get(
  * @apiError (400: Invalid or missing ISBN) {String} message "Invalid or missing ISBN - please refer to documentation"
  * @apiError (404: No ISBN found) {String} message "No matching <code>isbn</code> entries found"
  */
+messageRouter.delete(
+    '/',
+    mwValidISBNQuery,
+    (request: Request, response: Response) => {
+        const theQuery = 'DELETE FROM Demo WHERE ISBN = $1 RETURNING *'; //Remember to change table name!
+        const values = [request.query.ISBN];
+
+        pool.query(theQuery, values)
+            .then((result) => {
+                if (result.rowCount > 0) {
+                    response.send({
+                        entries: result.rows.map(format),
+                    });
+                } else {
+                    response.status(404).send({
+                        message: `No book for ISBN ${request.query.ISBN} found`,
+                    });
+                }
+            })
+            .catch((error) => {
+                //log the error
+                console.error('DB Query error on DELETE by ISBN');
+                console.error(error);
+                response.status(500).send({
+                    message: 'server error - contact support',
+                });
+            });
+    }
+);
 
 /**
  * @api {delete} /library/remove/author/:author Request to remove a series by author
