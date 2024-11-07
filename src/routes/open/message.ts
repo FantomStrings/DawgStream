@@ -527,7 +527,7 @@ messageRouter.post(
  * @apiError (404: No ISBN found) {String} message "No matching <code>isbn</code> entries found"
  */
 messageRouter.delete(
-    '/library/remove/ISBN/',
+    '/library/remove/ISBN/:ISBN',
     mwValidISBNQuery,
     (request: Request, response: Response) => {
         const theQuery = 'DELETE FROM BOOKS WHERE ISBN = $1 RETURNING *'; //Remember to change table name!
@@ -572,7 +572,7 @@ messageRouter.delete(
  * @apiError (404: Author Not Found) {String} message "Author not found"
  */
 messageRouter.delete(
-    '/library/remove/author/',
+    '/library/remove/author/:author',
     mwValidAuthorQuery,
     (request: Request, response: Response) => {
         const theQuery = 'DELETE FROM BOOKS WHERE authors = $1 RETURNING *';
