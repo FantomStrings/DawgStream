@@ -135,6 +135,7 @@ messageRouter.post(
             /*validationFunctions.isNumberProvided(priority) &&
             parseInt(priority) >= 1 &&
             parseInt(priority) <= 3*/
+            ISBN.length == 13 &&
             validationFunctions.isNumberProvided(ISBN)
         ) {
             //next();
@@ -229,22 +230,23 @@ messageRouter.post(
         //We're using placeholders ($1, $2, $3) in the SQL query string to avoid SQL Injection
         //If you want to read more: https://stackoverflow.com/a/8265319
 
-        //NOTE: what are we calling the table?
         //NOTE: how are we handling the optional reviews?
         const theQuery = //what do we want this to return?
-            'INSERT INTO DEMO(ISBN, Title, Author, Date, totalRatings, 1Star, 2Star, 3Star, 4Star, 5Star, averageRating) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *';
+            'INSERT INTO BOOK(isbn13, authors, publication_year, title, rating_avg, rating_count, rating_1_star, rating_2_star, rating_3_star, rating_4_star, rating_5_sta, image_url, image_small_urls) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *';
         const values = [
             request.body.ISBN,
-            request.body.Title,
             request.body.Author,
             request.body.Date,
+            request.body.Title,
+            averageRating,
             request.body.totalRatings,
             request.body.oneStar,
             request.body.twoStar,
             request.body.threeStar,
             request.body.fourStar,
             request.body.fiveStar,
-            request.body.averageRating, //Is this where we want this?
+            request.body.imageBigURL,
+            request.body.imageSmallURL,
         ];
 
         pool.query(theQuery, values)
