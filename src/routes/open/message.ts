@@ -261,11 +261,23 @@ messageRouter.post(
                 //Change how ends with is caught, since we have two uniques.
                 if (
                     error.detail != undefined &&
-                    (error.detail as string).endsWith('already exists.')
+                    //(error.detail as string).endsWith('already exists.')
+                    error.detail.includes('already exists') &&
+                    error.detail.includes('title')
                 ) {
-                    console.error('Name exists');
+                    console.error('title exists');
                     response.status(400).send({
-                        message: 'Name exists',
+                        message: 'title exists',
+                    });
+                if (
+                    error.detail != undefined &&
+                    //(error.detail as string).endsWith('already exists.')
+                    error.detail.includes('already exists') &&
+                    error.detail.includes('ISBN')
+                ) {
+                    console.error('IBSN exists');
+                    response.status(400).send({
+                        message: 'ISBN exists',
                     });
                 } else {
                     //log the error
