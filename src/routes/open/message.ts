@@ -68,7 +68,8 @@ function mwValidAuthorQuery(
     } else {
         console.error('Invalid or missing Author');
         response.status(400).send({
-            message: 'Invalid or missing ISBN - please refer to documentation',
+            message:
+                'Invalid or missing Author - please refer to documentation',
         });
     }
 }
@@ -572,7 +573,7 @@ messageRouter.delete(
  */
 messageRouter.delete(
     '/library/remove/author/',
-    mwValidISBNQuery,
+    mwValidAuthorQuery,
     (request: Request, response: Response) => {
         const theQuery = 'DELETE FROM BOOKS WHERE authors = $1 RETURNING *';
         const values = [request.query.Author];
