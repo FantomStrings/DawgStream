@@ -53,6 +53,26 @@ function mwValidISBNQuery(
         });
     }
 }
+function mwValidAuthorQuery(
+    request: Request,
+    response: Response,
+    next: NextFunction
+) {
+    const Author: string = request.query.Author as string;
+    if (
+        validationFunctions.isStringProvided(Author) /*&&
+        parseInt(priority) >= 1 &&
+        parseInt(priority) <= 3*/
+    ) {
+        next();
+    } else {
+        console.error('Invalid or missing Author');
+        response.status(400).send({
+            message:
+                'Invalid or missing Author - please refer to documentation',
+        });
+    }
+}
 
 function mwValidNameMessageBody(
     request: Request,
@@ -127,7 +147,7 @@ function mwValidNameLibraryBody(
  * @apiUse JSONError
  */
 messageRouter.post(
-    '/',
+    '/library/add',
     mwValidNameMessageBody,
     (request: Request, response: Response, next: NextFunction) => {
         const ISBN: string = request.body.ISBN as string;
@@ -232,7 +252,7 @@ messageRouter.post(
 
         //NOTE: how are we handling the optional reviews?
         const theQuery = //what do we want this to return?
-            'INSERT INTO BOOK(isbn13, authors, publication_year, title, rating_avg, rating_count, rating_1_star, rating_2_star, rating_3_star, rating_4_star, rating_5_sta, image_url, image_small_urls) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *';
+            'INSERT INTO BOOKS(isbn13, authors, publication_year, title, rating_avg, rating_count, rating_1_star, rating_2_star, rating_3_star, rating_4_star, rating_5_sta, image_url, image_small_urls) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *';
         const values = [
             request.body.ISBN,
             request.body.Author,
@@ -261,11 +281,24 @@ messageRouter.post(
                 //Change how ends with is caught, since we have two uniques.
                 if (
                     error.detail != undefined &&
-                    (error.detail as string).endsWith('already exists.')
+                    //(error.detail as string).endsWith('already exists.')
+                    error.detail.includes('already exists') &&
+                    error.detail.includes('title')
                 ) {
-                    console.error('Name exists');
+                    console.error('title exists');
                     response.status(400).send({
-                        message: 'Name exists',
+                        message: 'title exists',
+                    });
+                }
+                if (
+                    error.detail != undefined &&
+                    //(error.detail as string).endsWith('already exists.')
+                    error.detail.includes('already exists') &&
+                    error.detail.includes('ISBN')
+                ) {
+                    console.error('IBSN exists');
+                    response.status(400).send({
+                        message: 'ISBN exists',
                     });
                 } else {
                     //log the error
@@ -647,10 +680,10 @@ messageRouter.get(
  * @apiError (404: No ISBN found) {String} message "No matching <code>isbn</code> entries found"
  */
 messageRouter.delete(
-    '/',
+    '/library/remove/ISBN/:ISBN',
     mwValidISBNQuery,
     (request: Request, response: Response) => {
-        const theQuery = 'DELETE FROM Demo WHERE ISBN = $1 RETURNING *'; //Remember to change table name!
+        const theQuery = 'DELETE FROM BOOKS WHERE ISBN = $1 RETURNING *'; //Remember to change table name!
         const values = [request.query.ISBN];
 
         pool.query(theQuery, values)
@@ -691,6 +724,35 @@ messageRouter.delete(
  *
  * @apiError (404: Author Not Found) {String} message "Author not found"
  */
+messageRouter.delete(
+    '/library/remove/author/:author',
+    mwValidAuthorQuery,
+    (request: Request, response: Response) => {
+        const theQuery = 'DELETE FROM BOOKS WHERE authors = $1 RETURNING *';
+        const values = [request.query.Author];
+
+        pool.query(theQuery, values)
+            .then((result) => {
+                if (result.rowCount > 0) {
+                    response.send({
+                        entries: result.rows.map(format),
+                    });
+                } else {
+                    response.status(404).send({
+                        message: `No books for Author ${request.query.Author} found`,
+                    });
+                }
+            })
+            .catch((error) => {
+                //log the error
+                console.error('DB Query error on DELETE by ISBN');
+                console.error(error);
+                response.status(500).send({
+                    message: 'server error - contact support',
+                });
+            });
+    }
+);
 
 /**
  * @api {get} /message/all Request to all retrieve entries
