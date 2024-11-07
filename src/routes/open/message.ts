@@ -269,6 +269,7 @@ messageRouter.post(
                     response.status(400).send({
                         message: 'title exists',
                     });
+                }
                 if (
                     error.detail != undefined &&
                     //(error.detail as string).endsWith('already exists.')
