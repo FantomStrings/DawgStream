@@ -14,7 +14,6 @@ const isStringProvided = validationFunctions.isStringProvided;
 const format = (resultRow) =>
     `{${resultRow.isbn13}} - [${resultRow.title}]  [${resultRow.authors}] [${resultRow.publication_year}] [${resultRow.rating_count}] [${resultRow.rating_avg}]`;
 
-
 // Section 2: Middleware Functions
 
 function mwValidPriorityQuery(
@@ -44,9 +43,7 @@ function mwValidISBNQuery(
     next: NextFunction
 ) {
     const ISBN: string = request.query.ISBN as string;
-    if (
-        validationFunctions.isNumberProvided(ISBN)
-    ) {
+    if (validationFunctions.isNumberProvided(ISBN)) {
         next();
     } else {
         console.error('Invalid or missing ISBN');
@@ -61,10 +58,8 @@ function mwValidAuthorQuery(
     response: Response,
     next: NextFunction
 ) {
-    const Author: string = request.query.Author as string;
-    if (
-        validationFunctions.isStringProvided(Author)
-    ) {
+    const Author: string = request.params.author as string;
+    if (validationFunctions.isStringProvided(Author)) {
         next();
     } else {
         console.error('Invalid or missing Author');
@@ -74,8 +69,6 @@ function mwValidAuthorQuery(
         });
     }
 }
-
-
 
 function mwValidNameMessageBody(
     request: Request,
@@ -168,18 +161,48 @@ function mwValidRatingAverageQuery(
 }
 
 const validateUpdateRequest = (req: Request) => {
-    const { title, rating_1_star, rating_2_star, rating_3_star, rating_4_star, rating_5_star } = req.body;
-    const ratings = { rating_1_star, rating_2_star, rating_3_star, rating_4_star, rating_5_star };
+    const {
+        title,
+        rating_count,
+        rating_1_star,
+        rating_2_star,
+        rating_3_star,
+        rating_4_star,
+        rating_5_star,
+    } = req.body;
+    const ratings = {
+        rating_count,
+        rating_1_star,
+        rating_2_star,
+        rating_3_star,
+        rating_4_star,
+        rating_5_star,
+    };
 
     // Check if title is provided and at least one rating count is present
-    if (!title || (rating_1_star == null && rating_2_star == null && rating_3_star == null && rating_4_star == null && rating_5_star == null)) {
-        return { valid: false, message: 'At least one rating count must be provided' };
+    if (
+        !title ||
+        (rating_1_star == null &&
+            rating_2_star == null &&
+            rating_3_star == null &&
+            rating_4_star == null &&
+            rating_5_star == null)
+    ) {
+        return {
+            valid: false,
+            message: 'At least one rating count must be provided',
+        };
     }
 
     // Validate rating counts as non-negative integers
+    console.log('THIS IS WHERE NON NEG IS BEING CHECKED ----------');
     for (const [key, value] of Object.entries(ratings)) {
+        console.log('value: ' + value + ' Type: ' + typeof value);
         if (value != null && (!Number.isInteger(value) || value < 0)) {
-            return { valid: false, message: 'Rating counts must be non-negative integers' };
+            return {
+                valid: false,
+                message: 'Rating counts must be non-negative integers',
+            };
         }
     }
 
@@ -223,6 +246,7 @@ const checkBookExists = async (title: string) => {
  * @apiSuccess (Success 201) {JSON} Book The entered book object
  *
  * @apiError (400: ISBN exists) {String} message "ISBN already exists"
+ * @apiError (400: Title exists) {String} message "Title already exists"
  * @apiError (400: Invalid ISBN) {String} message "Invalid or Missing ISBN - please refer to documentation"
  * @apiError (400: Invalid title) {String} message "Invalid or Missing book title - please refer to documentation"
  * @apiError (400: Invalid author) {String} message "Invalid or Missing book author - please refer to documentation"
@@ -230,55 +254,46 @@ const checkBookExists = async (title: string) => {
  * @apiError (400: Invalid Parameters) {String} message "Invalid or Missing required information - please refer to documentation"
  * @apiUse JSONError
  */
+//mwValidNameMessageBody,
 libraryRouter.post(
     '/add',
-    mwValidNameMessageBody,
     (request: Request, response: Response, next: NextFunction) => {
-        const ISBN: string = request.body.ISBN as string;
-        if (
-            ISBN.length == 13 &&
-            validationFunctions.isNumberProvided(ISBN)
-        ) {
+        const ISBN: string = request.body.isbn as string;
+        if (ISBN.length == 13 && validationFunctions.isNumberProvided(ISBN)) {
             //next();
         } else {
             console.error('Invalid ISBN');
-            response.status(400).send({
+            return response.status(400).send({
                 message:
                     'Invalid or missing ISBN - please refer to documentation',
             });
         }
-        const Title: string = request.body.Title as string;
-        if (
-            validationFunctions.isStringProvided(Title)
-        ) {
+        const Title: string = request.body.title as string;
+        if (validationFunctions.isStringProvided(Title)) {
             //next();
         } else {
             console.error('Invalid book title');
-            response.status(400).send({
+            return response.status(400).send({
                 message:
                     'Invalid or missing book title - please refer to documentation',
             });
         }
-        const Author: string = request.body.Author as string;
-        if (
-            validationFunctions.isStringProvided(Author)
-        ) {
+        const Author: string = request.body.author as string;
+        if (validationFunctions.isStringProvided(Author)) {
             //next();
         } else {
             console.error('Invalid book Author');
-            response.status(400).send({
+            return response.status(400).send({
                 message:
                     'Invalid or missing book Author - please refer to documentation',
             });
         }
-        const Date: string = request.body.Date as string;
-        if (
-            validationFunctions.isNumberProvided(Date)
-        ) {
-            next();
+        const Date: string = request.body.publicationYear as string;
+        if (validationFunctions.isNumberProvided(Date)) {
+            //next();
         } else {
             console.error('Invalid publiciation date');
-            response.status(400).send({
+            return response.status(400).send({
                 message:
                     'Invalid or missing publication date - please refer to documentation',
             });
@@ -298,6 +313,8 @@ libraryRouter.post(
         const threeStar: number = request.body.threeStar as number;
         const fourStar: number = request.body.fourStar as number;
         const fiveStar: number = request.body.fiveStar as number;
+        console.log('here is three star: ' + threeStar);
+        console.log('Type of three star: ' + typeof threeStar);
         let averageRating: number;
         if (
             validationFunctions.isNumberProvided(totalRatings) &&
@@ -307,17 +324,31 @@ libraryRouter.post(
             validationFunctions.isNumberProvided(fourStar) &&
             validationFunctions.isNumberProvided(fiveStar)
         ) {
-            averageRating =
-                (fiveStar * 5 +
-                    fourStar * 4 +
-                    threeStar * 3 +
-                    twoStar * 2 +
-                    oneStar) /
-                totalRatings;
+            if (
+                totalRatings < 0 ||
+                oneStar < 0 ||
+                twoStar < 0 ||
+                threeStar < 0 ||
+                fourStar < 0 ||
+                fiveStar < 0
+            ) {
+                console.error('Rating counts must be non-negative integers');
+                return response.status(400).send({
+                    message: 'Rating counts must be non-negative integers',
+                });
+            } else {
+                averageRating =
+                    (fiveStar * 5 +
+                        fourStar * 4 +
+                        threeStar * 3 +
+                        twoStar * 2 +
+                        oneStar) /
+                    totalRatings;
+            }
         } else {
-            averageRating = null;
+            const averageRating = null;
         }
-        request.body.averageRating = averageRating;
+        //request.body.averageRating = averageRating;*/
         next();
     },
     (request: Request, response: Response) => {
@@ -326,12 +357,12 @@ libraryRouter.post(
 
         //NOTE: how are we handling the optional reviews?
         const theQuery =
-            'INSERT INTO BOOKS(isbn13, authors, publication_year, title, rating_avg, rating_count, rating_1_star, rating_2_star, rating_3_star, rating_4_star, rating_5_star, image_url, image_small_urls) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *';
+            'INSERT INTO BOOKS(isbn13, authors, publication_year, title, rating_avg, rating_count, rating_1_star, rating_2_star, rating_3_star, rating_4_star, rating_5_star, image_url, image_small_url) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *';
         const values = [
-            request.body.ISBN,
-            request.body.Author,
-            request.body.Date,
-            request.body.Title,
+            request.body.isbn,
+            request.body.author,
+            request.body.publicationYear,
+            request.body.title,
             request.body.averageRating,
             request.body.totalRatings,
             request.body.oneStar,
@@ -347,12 +378,13 @@ libraryRouter.post(
             .then((result) => {
                 // result.rows array are the records returned from the SQL statement.
                 // An INSERT statement will return a single row, the row that was inserted.
-                response.status(201).send({
+                return response.status(201).send({
                     entry: format(result.rows[0]), //might need to change this?
                 });
             })
             .catch((error) => {
                 //Change how ends with is caught, since we have two uniques.
+                console.log('ERROR DETAILS: ' + error.detail);
                 if (
                     error.detail != undefined &&
                     //(error.detail as string).endsWith('already exists.')
@@ -360,25 +392,24 @@ libraryRouter.post(
                     error.detail.includes('title')
                 ) {
                     console.error('title exists');
-                    response.status(400).send({
-                        message: 'title exists',
+                    return response.status(400).send({
+                        message: 'title already exists',
                     });
-                }
-                if (
+                } else if (
                     error.detail != undefined &&
                     //(error.detail as string).endsWith('already exists.')
                     error.detail.includes('already exists') &&
-                    error.detail.includes('ISBN')
+                    error.detail.includes('isbn')
                 ) {
                     console.error('IBSN exists');
-                    response.status(400).send({
-                        message: 'ISBN exists',
+                    return response.status(400).send({
+                        message: 'ISBN already exists',
                     });
                 } else {
                     //log the error
                     console.error('DB Query error on POST');
                     console.error(error);
-                    response.status(500).send({
+                    return response.status(500).send({
                         message: 'server error - contact support',
                     });
                 }
@@ -564,7 +595,7 @@ libraryRouter.get(
                     });
                 } else {
                     response.status(404).send({
-                        message: `No rating_avg ${request.query.rating_avg} messages found`,
+                        message: `No book associated with this rating was found`,
                     });
                 }
             })
@@ -600,7 +631,15 @@ libraryRouter.get(
  * @apiUse JSONError
  */
 libraryRouter.put('/update/ratings', async (req: Request, res: Response) => {
-    const { title, rating_1_star, rating_2_star, rating_3_star, rating_4_star, rating_5_star } = req.body;
+    const {
+        title,
+        rating_count,
+        rating_1_star,
+        rating_2_star,
+        rating_3_star,
+        rating_4_star,
+        rating_5_star,
+    } = req.body;
 
     try {
         // First, check if the book exists
@@ -620,7 +659,14 @@ libraryRouter.put('/update/ratings', async (req: Request, res: Response) => {
         const values = [title];
         let counter = 2;
 
-        const ratings = { rating_1_star, rating_2_star, rating_3_star, rating_4_star, rating_5_star };
+        const ratings = {
+            rating_count,
+            rating_1_star,
+            rating_2_star,
+            rating_3_star,
+            rating_4_star,
+            rating_5_star,
+        };
         for (const [key, value] of Object.entries(ratings)) {
             if (value != null) {
                 setClauses.push(`${key} = $${counter}`);
@@ -640,7 +686,9 @@ libraryRouter.put('/update/ratings', async (req: Request, res: Response) => {
         res.status(200).send({ message: "Book's ratings have been updated" });
     } catch (error) {
         console.error('Error updating book ratings:', error);
-        res.status(500).send({ message: 'Server error - please contact support' });
+        res.status(500).send({
+            message: 'Server error - please contact support',
+        });
     }
 });
 
@@ -662,11 +710,12 @@ libraryRouter.put('/update/ratings', async (req: Request, res: Response) => {
  * @apiError (404: No ISBN found) {String} message "No matching <code>isbn</code> entries found"
  */
 libraryRouter.delete(
-    '/library/remove/ISBN/:ISBN',
-    mwValidISBNQuery,
+    '/remove/ISBN/:isbn13',
+    myValidIsbn13Param,
     (request: Request, response: Response) => {
-        const theQuery = 'DELETE FROM BOOKS WHERE ISBN = $1 RETURNING *'; //Remember to change table name!
-        const values = [request.query.ISBN];
+        const theQuery = 'DELETE FROM BOOKS WHERE isbn13 = $1 RETURNING *'; //Remember to change table name!
+        const values = [request.params.isbn13];
+        console.log(values);
 
         pool.query(theQuery, values)
             .then((result) => {
@@ -675,8 +724,8 @@ libraryRouter.delete(
                         entries: result.rows.map(format),
                     });
                 } else {
-                    response.status(404).send({
-                        message: `No book for ISBN ${request.query.ISBN} found`,
+                    return response.status(404).send({
+                        message: `No book for ISBN ${request.params.isbn13} found`,
                     });
                 }
             })
@@ -707,11 +756,11 @@ libraryRouter.delete(
  * @apiError (404: Author Not Found) {String} message "Author not found"
  */
 libraryRouter.delete(
-    '/library/remove/author/:author',
+    '/remove/author/:author',
     mwValidAuthorQuery,
     (request: Request, response: Response) => {
         const theQuery = 'DELETE FROM BOOKS WHERE authors = $1 RETURNING *';
-        const values = [request.query.Author];
+        const values = [request.params.author];
 
         pool.query(theQuery, values)
             .then((result) => {
@@ -721,7 +770,8 @@ libraryRouter.delete(
                     });
                 } else {
                     response.status(404).send({
-                        message: `No books for Author ${request.query.Author} found`,
+                        message:
+                            'No book associated with this author was found',
                     });
                 }
             })
