@@ -16,6 +16,22 @@ const format = (resultRow) =>
 
 // Section 2: Middleware Functions
 
+function myValidAuthorQuery(
+    request: Request,
+    response: Response,
+    next: NextFunction
+) {
+    const author: string = request.query.authors as string;
+    if (validationFunctions.isStringProvided(author)) {
+        next();
+    } else {
+        response.status(400).send({
+            message:
+                'Invalid or missing author - please refer to documentation',
+        });
+    }
+}
+
 function mwValidPriorityQuery(
     request: Request,
     response: Response,
@@ -495,7 +511,8 @@ libraryRouter.get(
                     });
                 } else {
                     response.status(404).send({
-                        message: 'Book not found',
+                        message:
+                            'No book associated with this isbn13 was found',
                     });
                 }
             })
@@ -858,6 +875,60 @@ libraryRouter.delete(
  *
  */
 
+libraryRouter.get('/', (request: Request, response: Response, next) => {
+    const publishedYear: string = request.query.publication_year as string;
+    const ratingAvg: string = request.query.rating_avg as string;
+    const author: string = request.query.authors as string;
+    if (author && !ratingAvg && !publishedYear) {
+        myValidAuthorQuery(request, response, () => {
+            const theQuery =
+                "SELECT isbn13, authors, publication_year, title, rating_avg FROM BOOKS WHERE authors LIKE '%' || $1 || '%'";
+            const values = [request.query.authors];
+            pool.query(theQuery, values)
+                .then((result) => {
+                    if (result.rowCount > 0) {
+                        response.send({
+                            entries: result.rows.map(format),
+                        });
+                    } else {
+                        response.status(404).send({
+                            message: `No book associated with this author was found`,
+                        });
+                    }
+                })
+                .catch((error) => {
+                    //log the error
+                    console.error('DB Query error on GET by author');
+                    console.error(error);
+                    response.status(500).send({
+                        message: 'server error - contact support',
+                    });
+                });
+        });
+    } else {
+        next();
+    }
+});
+function myValidPublicationYearQuery(
+    request: Request,
+    response: Response,
+    next: NextFunction
+) {
+    const publishedYear: string = request.query.publication_year as string;
+    if (
+        validationFunctions.isNumberProvided(publishedYear) &&
+        publishedYear.length == 4
+    ) {
+        next();
+    } else {
+        response.status(400).send({
+            message:
+                'Invalid or missing publication_year - please refer to documentation',
+        });
+    }
+}
+
+
 /**
  * @api {get} /library/retrieve/Date/:date Request to retrieve books by original publication date
  *
@@ -874,6 +945,43 @@ libraryRouter.delete(
  * @apiError (404: Book Not Found) {string} message "No book associated with this publication year was found"
  *
  */
+
+libraryRouter.get('/', (request: Request, response: Response, next) => {
+    const publishedYear: string = request.query.publication_year as string;
+    const ratingAvg: string = request.query.rating_avg as string;
+    const authors: string = request.query.authors as string;
+    if (publishedYear && !ratingAvg && !authors) {
+        myValidPublicationYearQuery(request, response, () => {
+            const theQuery =
+                'SELECT isbn13, authors, publication_year, title, rating_avg FROM BOOKS where publication_year = $1';
+            const values = [request.query.publication_year];
+            pool.query(theQuery, values)
+                .then((result) => {
+                    if (result.rowCount > 0) {
+                        response.send({
+                            entries: result.rows.map(format),
+                        });
+                    } else {
+                        response.status(404).send({
+                            message: `No book associated with this publication year was found`,
+                        });
+                    }
+                })
+                .catch((error) => {
+                    //log the error
+                    console.error('DB Query error on GET by publication_year');
+                    console.error(error);
+                    response.status(500).send({
+                        message: 'server error - contact support',
+                    });
+                });
+
+            });
+        } else {
+            next();
+        }
+});
+
 
 /**
  * @api {get} /library/all Request to all retrieve entries
