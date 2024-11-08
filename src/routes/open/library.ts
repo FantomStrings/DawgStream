@@ -12,7 +12,7 @@ const isStringProvided = validationFunctions.isStringProvided;
 /*const format = (resultRow) =>
     `{${resultRow.priority}} - [${resultRow.name}] says: ${resultRow.message}`;*/
 const format = (resultRow) =>
-    `{${resultRow.isbn13}} - [${resultRow.title}]  [${resultRow.authors}] [${resultRow.publication_year}] [${resultRow.rating_count}] [${resultRow.rating_avg}]`;
+    `{'ISBN: ' ${resultRow.isbn13}} - 'Title: '[${resultRow.title}]  ' author '[${resultRow.authors}] ' publication year: [${resultRow.publication_year}] ' rating count: [${resultRow.rating_count}] ' rating average: ' [${resultRow.rating_avg}]`;
 
 // Section 2: Middleware Functions
 
@@ -135,8 +135,7 @@ function myValidIsbn13Param(
     } else {
         console.error('Invalid or missing isbn13');
         response.status(400).send({
-            message:
-                'Invalid or missing isbn13 - please refer to documentation',
+            message: 'Invalid or missing ISBN - please refer to documentation',
         });
     }
 }
@@ -155,7 +154,7 @@ function myValidTitleParam(
     } else {
         console.error('Invalid or missing title');
         response.status(400).send({
-            message: 'Invalid or missing title - please refer to documentation',
+            message: 'Invalid or missing Title - please refer to documentation',
         });
     }
 }
@@ -249,9 +248,9 @@ const checkBookExists = async (title: string) => {
  * @apiGroup Library
  *
  * @apiBody {number} ISBN ISBN *unique
- * @apiBody {string} Title Title of the book *unique
- * @apiBody {string} Author Author of the book
- * @apiBody {number} Date The publication year
+ * @apiBody {string} title Title of the book *unique
+ * @apiBody {string} author Author of the book
+ * @apiBody {number} date The publication year
  * @apiBody {number} [totalRatings] total number of ratings
  * @apiBody {number} [oneStar] number of 1 star reviews
  * @apiBody {number} [twoStar] number of 2 star reviews
@@ -274,8 +273,13 @@ const checkBookExists = async (title: string) => {
 libraryRouter.post(
     '/add',
     (request: Request, response: Response, next: NextFunction) => {
-        const ISBN: string = request.body.isbn as string;
-        if (ISBN.length == 13 && validationFunctions.isNumberProvided(ISBN)) {
+        const ISBN: number = request.body.ISBN as number;
+        console.log('ISBN length: ' + String(ISBN).length);
+        console.log('isbn number: ' + ISBN);
+        if (
+            String(ISBN).length == 13 &&
+            validationFunctions.isNumberProvided(ISBN)
+        ) {
             //next();
         } else {
             console.error('Invalid ISBN');
@@ -301,7 +305,7 @@ libraryRouter.post(
             console.error('Invalid book Author');
             return response.status(400).send({
                 message:
-                    'Invalid or missing book Author - please refer to documentation',
+                    'Invalid or missing book author - please refer to documentation',
             });
         }
         const Date: string = request.body.publicationYear as string;
@@ -323,12 +327,12 @@ libraryRouter.post(
         //generate average
         //Figure out these optionals, unsure how we check these.
         //figure out if this as number works lmao
-        const totalRatings: number = request.body.totalRatings as number;
-        const oneStar: number = request.body.oneStar as number;
-        const twoStar: number = request.body.twoStar as number;
-        const threeStar: number = request.body.threeStar as number;
-        const fourStar: number = request.body.fourStar as number;
-        const fiveStar: number = request.body.fiveStar as number;
+        const totalRatings: number = request.body?.totalRatings as number;
+        const oneStar: number = request.body?.oneStar as number;
+        const twoStar: number = request.body?.twoStar as number;
+        const threeStar: number = request.body?.threeStar as number;
+        const fourStar: number = request.body?.fourStar as number;
+        const fiveStar: number = request.body?.fiveStar as number;
         console.log('here is three star: ' + threeStar);
         console.log('Type of three star: ' + typeof threeStar);
         let averageRating: number;
@@ -362,9 +366,9 @@ libraryRouter.post(
                     totalRatings;
             }
         } else {
-            const averageRating = null;
+            averageRating = null;
         }
-        //request.body.averageRating = averageRating;*/
+        request.body.averageRating = averageRating;
         next();
     },
     (request: Request, response: Response) => {
@@ -375,7 +379,7 @@ libraryRouter.post(
         const theQuery =
             'INSERT INTO BOOKS(isbn13, authors, publication_year, title, rating_avg, rating_count, rating_1_star, rating_2_star, rating_3_star, rating_4_star, rating_5_star, image_url, image_small_url) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *';
         const values = [
-            request.body.isbn,
+            request.body.ISBN,
             request.body.author,
             request.body.publicationYear,
             request.body.title,
@@ -394,10 +398,32 @@ libraryRouter.post(
             .then((result) => {
                 // result.rows array are the records returned from the SQL statement.
                 // An INSERT statement will return a single row, the row that was inserted.
+                //entries: format(result.rows[0]),
+                let Book = {
+                    ISBN: request.body.ISBN,
+                    author: request.body.author,
+                    date: request.body.publicationYear,
+                    title: request.body.title,
+                    AverageRating: request.body.averageRating,
+                    totalRatings: request.body.totalRatings,
+                    oneStar: request.body.oneStar,
+                    twoStar: request.body.twoStar,
+                    threeStar: request.body.threeStar,
+                    fourStar: request.body.fourStar,
+                    fiveStar: request.body.fiveStar,
+                    imageBigURL: request.body.imageBigURL,
+                    imageSmallURL: request.body.imageSmallURL,
+                };
                 return response.status(201).send({
-                    entry: format(result.rows[0]), //might need to change this?
+                    //entries: format(result.rows[0]),
+                    Book, //: format(result.rows[0]), //might need to change this?
                 });
             })
+            /*return response.status(201).send({
+                    entries: format(result.rows[0]),*/
+            //Book, //: format(result.rows[0]), //might need to change this?
+            //});
+            //})
             .catch((error) => {
                 //Change how ends with is caught, since we have two uniques.
                 console.log('ERROR DETAILS: ' + error.detail);
@@ -407,9 +433,9 @@ libraryRouter.post(
                     error.detail.includes('already exists') &&
                     error.detail.includes('title')
                 ) {
-                    console.error('title exists');
+                    console.error('Title exists');
                     return response.status(400).send({
-                        message: 'title already exists',
+                        message: 'Title already exists',
                     });
                 } else if (
                     error.detail != undefined &&
@@ -511,8 +537,7 @@ libraryRouter.get(
                     });
                 } else {
                     response.status(404).send({
-                        message:
-                            'No book associated with this isbn13 was found',
+                        message: 'No book associated with this ISBN was found',
                     });
                 }
             })
@@ -565,7 +590,7 @@ libraryRouter.get(
                     });
                 } else {
                     response.status(404).send({
-                        message: `No title ${request.params.title} messages found`,
+                        message: `No books with the title ${request.params.title} were found`,
                     });
                 }
             })
@@ -597,7 +622,7 @@ libraryRouter.get(
  *
  */
 libraryRouter.get(
-    '/',
+    '/averageRating',
     mwValidRatingAverageQuery,
     (request: Request, response: Response) => {
         const theQuery =
@@ -887,11 +912,11 @@ libraryRouter.get('/', (request: Request, response: Response, next) => {
             pool.query(theQuery, values)
                 .then((result) => {
                     if (result.rowCount > 0) {
-                        response.send({
+                        return response.send({
                             entries: result.rows.map(format),
                         });
                     } else {
-                        response.status(404).send({
+                        return response.status(404).send({
                             message: `No book associated with this author was found`,
                         });
                     }
@@ -927,7 +952,6 @@ function myValidPublicationYearQuery(
         });
     }
 }
-
 
 /**
  * @api {get} /library/retrieve/Date/:date Request to retrieve books by original publication date
@@ -975,13 +999,58 @@ libraryRouter.get('/', (request: Request, response: Response, next) => {
                         message: 'server error - contact support',
                     });
                 });
-
-            });
-        } else {
-            next();
-        }
+        });
+    } else {
+        next();
+    }
 });
 
+/**
+ * @api {get} /library?rating_avg= Request to retrieve books by rating average
+ *
+ * @apiDescription Request to retrieve the information about all books with the given <code>rating_avg</code>
+ *
+ * @apiName RetrieveByRatingAvg
+ * @apiGroup Library
+ *
+ * @apiQuery {number} rating_avg the rating_avg to look up.
+ *
+ * @apiSuccess {String[]} entries the aggregate of all entries as the following string:
+ *      "{<code>title</code>} by <code>authors</code> - ISBN: <code>isbn13</code>, published in <code>publication_year</code>, average rating: <code>rating_avg</code>"
+ *
+ * @apiError (404: Book Not Found) {string} message "No book associated with this rating_avg was found"
+ *
+ */
+libraryRouter.get(
+    '/',
+    mwValidRatingAverageQuery,
+    (request: Request, response: Response) => {
+        const theQuery =
+            'SELECT isbn13, authors, publication_year, title, rating_avg FROM BOOKS where rating_avg = $1';
+        const values = [request.query.rating_avg];
+
+        pool.query(theQuery, values)
+            .then((result) => {
+                if (result.rowCount > 0) {
+                    response.send({
+                        entries: result.rows,
+                    });
+                } else {
+                    response.status(404).send({
+                        message: `No book associated with this rating was found`,
+                    });
+                }
+            })
+            .catch((error) => {
+                //log the error
+                console.error('DB Query error on GET by rating_avg');
+                console.error(error);
+                response.status(500).send({
+                    message: 'server error - contact support',
+                });
+            });
+    }
+);
 
 /**
  * @api {get} /library/all Request to all retrieve entries
