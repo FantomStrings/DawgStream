@@ -602,17 +602,17 @@ libraryRouter.get(
 libraryRouter.put('/update/ratings', async (req: Request, res: Response) => {
     const { title, rating_1_star, rating_2_star, rating_3_star, rating_4_star, rating_5_star } = req.body;
 
-    // Validate the request
-    const validation = validateUpdateRequest(req);
-    if (!validation.valid) {
-        return res.status(400).send({ message: validation.message });
-    }
-
     try {
-        // Check if the book exists
+        // First, check if the book exists
         const bookExists = await checkBookExists(title);
         if (!bookExists) {
             return res.status(404).send({ message: 'Book title not found' });
+        }
+
+        // If the book exists, validate the rating counts
+        const validation = validateUpdateRequest(req);
+        if (!validation.valid) {
+            return res.status(400).send({ message: validation.message });
         }
 
         // Construct the update query dynamically based on provided rating counts
@@ -633,7 +633,7 @@ libraryRouter.put('/update/ratings', async (req: Request, res: Response) => {
             UPDATE Books
             SET ${setClauses.join(', ')}
             WHERE title = $1
-            RETURNING *;
+                RETURNING *;
         `;
 
         await pool.query(updateQuery, values);
