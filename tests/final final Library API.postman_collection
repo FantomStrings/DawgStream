@@ -1,0 +1,2031 @@
+{
+	"info": {
+		"_postman_id": "e30bc26b-3bd9-433b-88b3-d32b897e4b3c",
+		"name": "Library API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "39594368"
+	},
+	"item": [
+		{
+			"name": "noTitleFAIL",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"// Check that the response is in JSON format\r",
+							"pm.test(\"Response format is JSON\", function () {\r",
+							"    pm.response.to.be.json;\r",
+							"});\r",
+							"\r",
+							"// Check if status code is 400 for missing required field\r",
+							"pm.test(\"Status code is 400 - Missing required field\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Error message for missing title\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property(\"message\");\r",
+							"    pm.expect(jsonData.message).to.equal(\"Invalid or missing book title - please refer to documentation\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"ISBN\": 9781234567890,\r\n  \"title\": \"\",\r\n  \"author\": \"John Doe\",\r\n  \"publicationYear\": 2021,\r\n  \"totalRatings\": 0,\r\n  \"1Star\": 0,\r\n  \"2Star\": 0,\r\n  \"3Star\": 0,\r\n  \"4Star\": 0,\r\n  \"5Star\": 0\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:4000/library/add",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"library",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "noAuthorFAIL",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"// Check that the response is in JSON format\r",
+							"pm.test(\"Response format is JSON\", function () {\r",
+							"    pm.response.to.be.json;\r",
+							"});\r",
+							"\r",
+							"// Check if status code is 400 for missing required field\r",
+							"pm.test(\"Status code is 400 - Missing required field\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"// Check that the response has an appropriate error message\r",
+							"pm.test(\"Error message for missing author\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property(\"message\");\r",
+							"    pm.expect(jsonData.message).to.equal(\"Invalid or missing book author - please refer to documentation\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"ISBN\": 9781234567890,\r\n  \"title\": \"The Great Book\",\r\n  \"author\": \"\",\r\n  \"publicationYear\": 2021,\r\n  \"totalRatings\": 0,\r\n  \"1Star\": 0,\r\n  \"2Star\": 0,\r\n  \"3Star\": 0,\r\n  \"4Star\": 0,\r\n  \"5Star\": 0\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:4000/library/add",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"library",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "noISBNFAIL",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"// Check that the response is in JSON format\r",
+							"pm.test(\"Response format is JSON\", function () {\r",
+							"    pm.response.to.be.json;\r",
+							"});\r",
+							"\r",
+							"// Check if status code is 400 for missing required field\r",
+							"pm.test(\"Status code is 400 - Missing required field\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Error message for missing isbn\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property(\"message\");\r",
+							"    pm.expect(jsonData.message).to.equal(\"Invalid or missing isbn13 - please refer to documentation\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"ISBN\": null,\r\n  \"title\": \"The Great Book\",\r\n  \"author\": \"John Doe\",\r\n  \"publicationYear\": 2021,\r\n  \"totalRatings\": 0,\r\n  \"1Star\": 0,\r\n  \"2Star\": 0,\r\n  \"3Star\": 0,\r\n  \"4Star\": 0,\r\n  \"5Star\": 0\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:4000/library/add",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"library",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "noYearFAIL",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"// Check that the response is in JSON format\r",
+							"pm.test(\"Response format is JSON\", function () {\r",
+							"    pm.response.to.be.json;\r",
+							"});\r",
+							"\r",
+							"// Check if status code is 400 for missing required field\r",
+							"pm.test(\"Status code is 400 - Missing required field\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"// Check that the response has an appropriate error message\r",
+							"pm.test(\"Error message for missing publicationYear\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property(\"message\");\r",
+							"    pm.expect(jsonData.message).to.equal(\"Invalid or missing publication date - please refer to documentation\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"ISBN\": 9781234567890,\r\n  \"title\": \"The Great Book\",\r\n  \"author\": \"John Doe\",\r\n  \"publicationYear\": null,\r\n  \"totalRatings\": 0,\r\n  \"1Star\": 0,\r\n  \"2Star\": 0,\r\n  \"3Star\": 0,\r\n  \"4Star\": 0,\r\n  \"5Star\": 0\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:4000/library/add",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"library",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "negativeRatingFAIL",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Check if status code is 400 for invalid rating value\r",
+							"pm.test(\"Status code is 400 - Invalid rating value\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"// Check that the response contains an appropriate error message\r",
+							"pm.test(\"Error message for negative rating value\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property(\"message\");\r",
+							"    pm.expect(jsonData.message).to.equal(\"Rating counts must be non-negative integers\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"ISBN\": 9781234567899,\r\n  \"title\": \"The Great Book\",\r\n  \"author\": \"John Doe\",\r\n  \"publicationYear\": 2021,\r\n  \"totalRatings\": 12,\r\n  \"oneStar\": 1,\r\n  \"twoStar\": 2,\r\n  \"threeStar\": -3,\r\n  \"fourStar\": 4,\r\n  \"fiveStar\": 5\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:4000/library/add",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"library",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "isbnAlreadyExists",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Check that the response is in JSON format\r",
+							"pm.test(\"Response format is JSON\", function () {\r",
+							"    pm.response.to.be.json;\r",
+							"});\r",
+							"\r",
+							"// Check if status code is 400 for missing required field\r",
+							"pm.test(\"Status code is 400 - isbn13 already exists\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"// Check that the response has an appropriate error message\r",
+							"pm.test(\"Error message for existing ISBN\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property(\"message\");\r",
+							"    pm.expect(jsonData.message).to.equal(\"isbn13 already exists\")\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"ISBN\": 9781416524790,\r\n  \"title\": \"The Great Book\",\r\n  \"author\": \"John Doe\",\r\n  \"publicationYear\": 2021,\r\n  \"totalRatings\": 0,\r\n  \"1Star\": 0,\r\n  \"2Star\": 0,\r\n  \"3Star\": 0,\r\n  \"4Star\": 0,\r\n  \"5Star\": 0\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:4000/library/add",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"library",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "preparingForDelete",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"ISBN\": 9781416527449,\r\n  \"title\": \"This is a Book\",\r\n  \"author\": \"XYZ\",\r\n  \"publicationYear\": 2021,\r\n  \"totalRatings\": 0,\r\n  \"1Star\": 0,\r\n  \"2Star\": 0,\r\n  \"3Star\": 0,\r\n  \"4Star\": 0,\r\n  \"5Star\": 0\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:4000/library/add",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"library",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "preparingForDelete Copy",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"ISBN\": 9781416526449,\r\n  \"title\": \"This is also a Book\",\r\n  \"author\": \"ABC\",\r\n  \"publicationYear\": 2021,\r\n  \"totalRatings\": 0,\r\n  \"1Star\": 0,\r\n  \"2Star\": 0,\r\n  \"3Star\": 0,\r\n  \"4Star\": 0,\r\n  \"5Star\": 0\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:4000/library/add",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"library",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "deleteByAuthorPASS",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Check if status code is 200 for successful deletion\r",
+							"pm.test(\"Status code is 200 - Author's books successfully deleted\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// Check if response contains expected book entry\r",
+							"pm.test(\"Response contains valid book entry\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property(\"entries\");\r",
+							"    pm.expect(jsonData.entries).to.be.an(\"array\").that.is.not.empty;\r",
+							"\r",
+							"    // Validate the structure of the first entry\r",
+							"    var bookEntry = jsonData.entries[0];\r",
+							"    pm.expect(bookEntry).to.include(\"ISBN:\");\r",
+							"    pm.expect(bookEntry).to.include(\"Title:\");\r",
+							"    pm.expect(bookEntry).to.include(\"author\");\r",
+							"    pm.expect(bookEntry).to.include(\"publication year:\");\r",
+							"    pm.expect(bookEntry).to.include(\"rating count:\");\r",
+							"    pm.expect(bookEntry).to.include(\"rating average:\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:4000/library/remove/author/XYZ",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"library",
+						"remove",
+						"author",
+						"XYZ"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "deleteByAuthorFAIL",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Check if status code is 404 when the author is not found\r",
+							"pm.test(\"Status code is 404 - Author not found\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"});\r",
+							"\r",
+							"// Check if response contains appropriate error message for non-existent author\r",
+							"pm.test(\"Error message for author not found\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property(\"message\");\r",
+							"    pm.expect(jsonData.message).to.equal(\"No book associated with this author was found\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:4000/library/remove/author/Unknown Author",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"library",
+						"remove",
+						"author",
+						"Unknown Author"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "deleteByISBNPASS",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Check if status code is 200 for successful deletion\r",
+							"pm.test(\"Status code is 200 - Book successfully deleted\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// Check if response contains the correct entries structure and expected book details\r",
+							"pm.test(\"Response contains valid book entry\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property(\"entries\");\r",
+							"    pm.expect(jsonData.entries).to.be.an(\"array\").that.is.not.empty;\r",
+							"\r",
+							"    // Validate the structure of the first entry\r",
+							"    var bookEntry = jsonData.entries[0];\r",
+							"    pm.expect(bookEntry).to.include(\"ISBN:\");\r",
+							"    pm.expect(bookEntry).to.include(\"Title:\");\r",
+							"    pm.expect(bookEntry).to.include(\"author\");\r",
+							"    pm.expect(bookEntry).to.include(\"publication year:\");\r",
+							"    pm.expect(bookEntry).to.include(\"rating count:\");\r",
+							"    pm.expect(bookEntry).to.include(\"rating average:\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:4000/library/remove/ISBN/9781416526449",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"library",
+						"remove",
+						"ISBN",
+						"9781416526449"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "deleteByISBNFAIL",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Check if status code is 404 when the ISBN is not found\r",
+							"pm.test(\"Status code is 404 - ISBN not found\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"});\r",
+							"\r",
+							"// Check if response contains appropriate error message for non-existent ISBN\r",
+							"pm.test(\"Error message for ISBN not found\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property(\"message\");\r",
+							"    pm.expect(jsonData.message).to.equal(\"No book for isbn13 9999999999999 found\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:4000/library/remove/ISBN/9999999999999",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"library",
+						"remove",
+						"ISBN",
+						"9999999999999"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "deleteByISBN400",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Check if status code is 400 for invalid ISBN format\r",
+							"pm.test(\"Status code is 400 - Invalid ISBN format\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"// Check if response contains appropriate error message for invalid ISBN format\r",
+							"pm.test(\"Error message for invalid ISBN format\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property(\"message\");\r",
+							"    pm.expect(jsonData.message).to.equal(\"Invalid or missing isbn13 - please refer to documentation\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:4000/library/remove/ISBN/badISBN",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"library",
+						"remove",
+						"ISBN",
+						"badISBN"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "titleAlreadyExists",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Check that the response is in JSON format\r",
+							"pm.test(\"Response format is JSON\", function () {\r",
+							"    pm.response.to.be.json;\r",
+							"});\r",
+							"\r",
+							"// Check if status code is 400 for missing required field\r",
+							"pm.test(\"Status code is 400 - Title already exists\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"// Check that the response has an appropriate error message\r",
+							"pm.test(\"Error message for existing Title\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property(\"message\");\r",
+							"    pm.expect(jsonData.message).to.equal(\"Title already exists\")\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"ISBN\": 9781416524723,\r\n  \"title\": \"The Hobbit\",\r\n  \"author\": \"John Doe\",\r\n  \"publicationYear\": 2021,\r\n  \"totalRatings\": 0,\r\n  \"1Star\": 0,\r\n  \"2Star\": 0,\r\n  \"3Star\": 0,\r\n  \"4Star\": 0,\r\n  \"5Star\": 0\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:4000/library/add",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"library",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PreparingISBNnoRatingsPass",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:4000/library/remove/ISBN/9781234567894",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"library",
+						"remove",
+						"ISBN",
+						"9781234567894"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "noRatingsPASS",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//Check for successful creation\r",
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"// Check that the response is in JSON format\r",
+							"pm.test(\"Response format is JSON\", function () {\r",
+							"    pm.response.to.be.json;\r",
+							"});\r",
+							"// Check if the response contains the expected properties\r",
+							"pm.test(\"Response has the correct data fields\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property(\"Book\")\r",
+							"    pm.expect(jsonData.Book).to.have.property(\"title\");\r",
+							"    pm.expect(jsonData.Book).to.have.property(\"author\");\r",
+							"    pm.expect(jsonData.Book).to.have.property(\"ISBN\");\r",
+							"    pm.expect(jsonData.Book).to.have.property(\"date\");\r",
+							"\r",
+							"});\r",
+							"\r",
+							"// Check if the response data matches the input data\r",
+							"pm.test(\"Response data matches input data\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.Book.ISBN).to.equal(9781234567894);\r",
+							"    pm.expect(jsonData.Book.title).to.equal(\"The Great Book\");\r",
+							"    pm.expect(jsonData.Book.author).to.equal(\"John Doe\");\r",
+							"    pm.expect(jsonData.Book.date).to.equal(2021);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"ISBN\": 9781234567894,\r\n  \"title\": \"The Great Book\",\r\n  \"author\": \"John Doe\",\r\n  \"publicationYear\": 2021\r\n  /*\"totalRatings\": 0,\r\n  \"1Star\": null,\r\n  \"2Star\": null,\r\n  \"3Star\": null,\r\n  \"4Star\": null,\r\n  \"5Star\": null*/\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:4000/library/add",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"library",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:4000/library/retrieve/ISBN/:ISBN",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response to have specified elements\", () => {\r",
+							"    const body = pm.response.json();\r",
+							"    \r",
+							"    // Check if 'entry' exists\r",
+							"    pm.expect(body).to.have.ownProperty(\"entry\");\r",
+							"\r",
+							"    // Validate properties inside the 'entry' object\r",
+							"    const entry = body.entry;\r",
+							"    pm.expect(entry).to.have.ownProperty(\"isbn13\");\r",
+							"    pm.expect(entry).to.have.ownProperty(\"authors\");\r",
+							"    pm.expect(entry).to.have.ownProperty(\"publication_year\");\r",
+							"    pm.expect(entry).to.have.ownProperty(\"title\");\r",
+							"    pm.expect(entry).to.have.ownProperty(\"rating_avg\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is Success. Successfully retrieve a book by ISBN\", ()=>{\r",
+							"    pm.response.to.have.status(200);\r",
+							"})\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:4000/library/isbn13/9780439554930",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"library",
+						"isbn13",
+						"9780439554930"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateRatingFailNegativeRating",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response to have specified elements\", () => {\r",
+							"    const body = pm.response.json()\r",
+							"    pm.expect(body).to.have.ownProperty(\"message\")\r",
+							"    pm.expect(body.message).to.equal(\"Rating counts must be non-negative integers\")\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Response is Fail\", () => {\r",
+							"    pm.response.to.have.status(400);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"The Great Book\",\r\n    \"rating_1_star\": -129464,\r\n    \"rating_2_star\": 4324534,\r\n    \"rating_3_star\": -2313234,\r\n    \"rating_4_star\": 321298,\r\n    \"rating_5_star\": 3128\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:4000/library/update/ratings",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"library",
+						"update",
+						"ratings"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateRatingFailMissingParam",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response to have specified elements\", () => {\r",
+							"    const body = pm.response.json()\r",
+							"    pm.expect(body).to.have.ownProperty(\"message\")\r",
+							"    pm.expect(body.message).to.equal(\"At least one rating count must be provided\")\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Response is Fail\", () => {\r",
+							"    pm.response.to.have.status(400);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"The Great Book\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:4000/library/update/ratings",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"library",
+						"update",
+						"ratings"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateRatingFail404",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response to have specified elements\", () => {\r",
+							"    const body = pm.response.json()\r",
+							"    pm.expect(body).to.have.ownProperty(\"message\")\r",
+							"    pm.expect(body.message).to.equal(\"Book title not found\")\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Response is Fail\", () => {\r",
+							"    pm.response.to.have.status(404);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"Another book\",\r\n    \"rating_1_star\": \"129464\",\r\n    \"rating_2_star\": \"4324534\",\r\n    \"rating_3_star\": \"2313234\",\r\n    \"rating_4_star\": \"321298\",\r\n    \"rating_5_star\": \"3128\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:4000/library/update/ratings",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"library",
+						"update",
+						"ratings"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateRatingSuccess",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response to have specified elements\", () => {\r",
+							"    const body = pm.response.json()\r",
+							"    pm.expect(body).to.have.ownProperty(\"message\")\r",
+							"    pm.expect(body.message).to.equal(\"Book's ratings have been updated\")\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Response is Success\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"The Great Book\",\r\n    \"rating_count\": 7091658,\r\n    \"rating_1_star\": 129464,\r\n    \"rating_2_star\": 4324534,\r\n    \"rating_3_star\": 2313234,\r\n    \"rating_4_star\": 321298,\r\n    \"rating_5_star\": 3128\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:4000/library/update/ratings",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"library",
+						"update",
+						"ratings"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "retrieveDateFail",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response to have specified elements\", () => {\r",
+							"    const body = pm.response.json()\r",
+							"    pm.expect(body).to.have.ownProperty(\"message\")\r",
+							"    pm.expect(body.message).to.equal(\"Invalid or missing rating_avg - please refer to documentation\")\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Response is Fail\", () => {\r",
+							"    pm.response.to.have.status(400);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:4000/library?date=:date",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"library"
+					],
+					"query": [
+						{
+							"key": "date",
+							"value": ":date"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "retrieveDateSuccess",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response to have specified elements\", () => {\r",
+							"    const body = pm.response.json()\r",
+							"    pm.expect(body).to.have.ownProperty(\"entries\")\r",
+							"    pm.expect(body.entries).to.be.not.empty\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Response is Success\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:4000/library?publication_year=2021",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"library"
+					],
+					"query": [
+						{
+							"key": "publication_year",
+							"value": "2021"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "retrieveRatingFail",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response to have specified elements\", () => {\r",
+							"    const body = pm.response.json()\r",
+							"    pm.expect(body).to.have.ownProperty(\"message\")\r",
+							"    pm.expect(body.message).to.equal(\"No book associated with this rating_avg was found\")\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Response is Fail\", () => {\r",
+							"    pm.response.to.have.status(404);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:4000/library?rating_avg=6",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"library"
+					],
+					"query": [
+						{
+							"key": "rating_avg",
+							"value": "6"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "retrieveRatingSuccess",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response to have specified elements\", () => {\r",
+							"    const body = pm.response.json()\r",
+							"    pm.expect(body).to.have.ownProperty(\"entries\")\r",
+							"    pm.expect(body.entries).to.be.not.empty\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Response is Success\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:4000/library/?rating_avg=4.34",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"library",
+						""
+					],
+					"query": [
+						{
+							"key": "rating_avg",
+							"value": "4.34"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:4000/library/retrieve/Author/:Author Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response to have specified elements\", ()=>{\r",
+							"    const body = pm.response.json();\r",
+							"    pm.expect(body).to.have.ownProperty(\"entries\");\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Response is Success. Successfully retrieve a book by Author\", ()=>{\r",
+							"    pm.response.to.have.status(200);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:4000/library?authors=John Doe",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"library"
+					],
+					"query": [
+						{
+							"key": "authors",
+							"value": "John Doe"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:4000/library/isbn13/:isbn13",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response to have specified elements\", ()=>{\r",
+							"    const body = pm.response.json();\r",
+							"    pm.expect(body).to.have.ownProperty(\"entry\");\r",
+							"    pm.expect(body.entry).to.have.ownProperty(\"isbn13\");\r",
+							"    pm.expect(body.entry).to.have.ownProperty(\"authors\");\r",
+							"    pm.expect(body.entry).to.have.ownProperty(\"publication_year\");\r",
+							"    pm.expect(body.entry).to.have.ownProperty(\"title\");\r",
+							"    pm.expect(body.entry).to.have.ownProperty(\"rating_avg\");\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Response is Success. Successfully retrieve a book by isbn13\", ()=>{\r",
+							"    pm.response.to.have.status(200);\r",
+							"})\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:4000/library/isbn13/9780618260300",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"library",
+						"isbn13",
+						"9780618260300"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:4000/library/isbn13/:isbn13 400 Exception test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response to have specified elements\", ()=>{\r",
+							"    const body = pm.response.json();\r",
+							"    pm.expect(body).to.have.ownProperty(\"message\");\r",
+							"    pm.expect(body.message).to.equal(\"Invalid or missing isbn13 - please refer to documentation\");\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Response is Success. Received bad request\", ()=>{\r",
+							"    pm.response.to.have.status(400);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"packages": {},
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:4000/library/isbn13/61532",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"library",
+						"isbn13",
+						"61532"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:4000/library/isbn13/:isbn13 404 Exception test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response to have specified elements\", ()=>{\r",
+							"    const body = pm.response.json();\r",
+							"    pm.expect(body).to.have.ownProperty(\"message\");\r",
+							"    pm.expect(body.message).to.equal(\"No book associated with this isbn13 was found\");\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Response is Success. Book not found\", ()=>{\r",
+							"    pm.response.to.have.status(404);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:4000/library/isbn13/5261723678293",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"library",
+						"isbn13",
+						"5261723678293"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:4000/library?authors=(name here)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response to have specified elements\", ()=>{\r",
+							"    const body = pm.response.json();\r",
+							"    pm.expect(body).to.have.ownProperty(\"entries\");\r",
+							"    pm.expect(body.entries).to.be.not.empty\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Response is Success. Successfully retrieve a book by author\", ()=>{\r",
+							"    pm.response.to.have.status(200);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:4000/library?authors=George R.R. Martin",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"library"
+					],
+					"query": [
+						{
+							"key": "authors",
+							"value": "George R.R. Martin"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:4000/library?authors= 404 Exception test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response to have specified elements\", ()=>{\r",
+							"    const body = pm.response.json();\r",
+							"    pm.expect(body).to.have.ownProperty(\"message\");\r",
+							"    pm.expect(body.message).to.equal(\"No book associated with this author was found\");\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Response is Success. Book not found\", ()=>{\r",
+							"    pm.response.to.have.status(404);\r",
+							"})\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:4000/library?authors=Gabe",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"library"
+					],
+					"query": [
+						{
+							"key": "authors",
+							"value": "Gabe"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:4000/library/retrieve {all books}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response to have specified elements\", ()=>{\r",
+							"    const body = pm.response.json();\r",
+							"    pm.expect(body).to.have.ownProperty(\"entries\");\r",
+							"    pm.expect(body.entries).to.be.not.empty;\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Response is Success. Successfully retrieve all books from db\", ()=>{\r",
+							"    pm.response.to.have.status(200);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:4000/library/retrieve",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"library",
+						"retrieve"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:4000/library/title/:title",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response to have specified elements\", ()=>{\r",
+							"    const body = pm.response.json();\r",
+							"    pm.expect(body).to.have.ownProperty(\"entry\");\r",
+							"    pm.expect(body.entry).to.have.ownProperty(\"isbn13\");\r",
+							"    pm.expect(body.entry).to.have.ownProperty(\"authors\");\r",
+							"    pm.expect(body.entry).to.have.ownProperty(\"publication_year\");\r",
+							"    pm.expect(body.entry).to.have.ownProperty(\"title\");\r",
+							"    pm.expect(body.entry).to.have.ownProperty(\"rating_avg\");\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Response is Success. Successfully retrieve a book by title\", ()=>{\r",
+							"    pm.response.to.have.status(200);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:4000/library/title/The Fault in Our Stars",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"library",
+						"title",
+						"The Fault in Our Stars"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:4000/library/title/:title 404 Exception test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response to have specified elements\", ()=>{\r",
+							"    const body = pm.response.json();\r",
+							"    pm.expect(body).to.have.ownProperty(\"message\");\r",
+							"    pm.expect(body.message).to.equal(\"No book associated with this title was found\");\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Response is Success. Book not found\", ()=>{\r",
+							"    pm.response.to.have.status(404);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:4000/library/title/lord of the ring",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"library",
+						"title",
+						"lord of the ring"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:4000/library?publication_year=(year here)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response to have specified elements\", ()=>{\r",
+							"    const body = pm.response.json();\r",
+							"    pm.expect(body).to.have.ownProperty(\"entries\");\r",
+							"    pm.expect(body.entries).to.be.not.empty\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Response is Success. Successfully retrieve a book by author\", ()=>{\r",
+							"    pm.response.to.have.status(200);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:4000/library?publication_year=2002",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"library"
+					],
+					"query": [
+						{
+							"key": "publication_year",
+							"value": "2002"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:4000/library?publication_year= 400 exception test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response to have specified elements\", ()=>{\r",
+							"    const body = pm.response.json();\r",
+							"    pm.expect(body).to.have.ownProperty(\"message\");\r",
+							"    pm.expect(body.message).to.equal(\"Invalid or missing publication_year - please refer to documentation\");\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Response is Success. Received bad request\", ()=>{\r",
+							"    pm.response.to.have.status(400);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:4000/library?publication_year=abcf",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"library"
+					],
+					"query": [
+						{
+							"key": "publication_year",
+							"value": "abcf"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:4000/library?publication_year= 404 Exception test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response to have specified elements\", ()=>{\r",
+							"    const body = pm.response.json();\r",
+							"    pm.expect(body).to.have.ownProperty(\"message\");\r",
+							"    pm.expect(body.message).to.equal(\"No book associated with this publication year was found\");\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Response is Success. Book not found\", ()=>{\r",
+							"    pm.response.to.have.status(404);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:4000/library?publication_year=4200",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"library"
+					],
+					"query": [
+						{
+							"key": "publication_year",
+							"value": "4200"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:4000/library?rating_avg=",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response to have specified elements\", ()=>{\r",
+							"    const body = pm.response.json();\r",
+							"    pm.expect(body).to.have.ownProperty(\"entries\");\r",
+							"    pm.expect(body.entries).to.be.not.empty\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Response is Success. Successfully retrieve a book by publication_year\", ()=>{\r",
+							"    pm.response.to.have.status(200);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:4000/library?rating_avg=4.20",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"library"
+					],
+					"query": [
+						{
+							"key": "rating_avg",
+							"value": "4.20"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:4000/library?rating_avg= 400 exception test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response to have specified elements\", ()=>{\r",
+							"    const body = pm.response.json();\r",
+							"    pm.expect(body).to.have.ownProperty(\"message\");\r",
+							"    pm.expect(body.message).to.equal(\"Invalid or missing rating_avg - please refer to documentation\");\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Response is Success. Received bad request\", ()=>{\r",
+							"    pm.response.to.have.status(400);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:4000/library?rating_avg=abc",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"library"
+					],
+					"query": [
+						{
+							"key": "rating_avg",
+							"value": "abc"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:4000/library?rating_avg= 404 exception test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response to have specified elements\", ()=>{\r",
+							"    const body = pm.response.json();\r",
+							"    pm.expect(body).to.have.ownProperty(\"message\");\r",
+							"    pm.expect(body.message).to.equal(\"No book associated with this rating_avg was found\");\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Response is Success. Book not found\", ()=>{\r",
+							"    pm.response.to.have.status(404);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:4000/library?rating_avg=1.00",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"library"
+					],
+					"query": [
+						{
+							"key": "rating_avg",
+							"value": "1.00"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:4000/library/retrieve",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response to have specified elements\", ()=>{\r",
+							"    const body = pm.response.json();\r",
+							"    pm.expect(body).to.have.ownProperty(\"entries\");\r",
+							"    pm.expect(body.entries).to.be.not.empty;\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Response is Success. Successfully retrieve all books from db\", ()=>{\r",
+							"    pm.response.to.have.status(200);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:4000/library/retrieve",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"library",
+						"retrieve"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
