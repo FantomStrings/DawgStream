@@ -241,7 +241,7 @@ const checkBookExists = async (title: string) => {
  *
  * @apiDescription Request to add a book to the DB
  *
- * @apiName PostMessage
+ * @apiName PostBook
  * @apiGroup Library
  *
  * @apiBody {number} isbn13 isbn13 *unique
@@ -314,15 +314,12 @@ libraryRouter.post(
                     'Invalid or missing publication date - please refer to documentation',
             });
         }
-        //Figure out these optionals, unsure how we check these.
 
         next();
     },
     //Method to calculate average rating.
     (request: Request, response: Response, next: NextFunction) => {
         //generate average
-        //Figure out these optionals, unsure how we check these.
-        //figure out if this as number works lmao
         const totalRatings: number = request.body?.totalRatings as number;
         const oneStar: number = request.body?.oneStar as number;
         const twoStar: number = request.body?.twoStar as number;
@@ -387,9 +384,6 @@ libraryRouter.post(
 
         pool.query(theQuery, values)
             .then((result) => {
-                // result.rows array are the records returned from the SQL statement.
-                // An INSERT statement will return a single row, the row that was inserted.
-                //entries: format(result.rows[0]),
                 const Book = {
                     ISBN: request.body.ISBN,
                     author: request.body.author,
@@ -656,18 +650,18 @@ libraryRouter.get('/retrieve', (request: Request, response: Response) => {
 });
 
 /**
- * @api {get} /library/:isbn13 Request to retrieve a book by isbn13
+ * @api {get} /library/isbn13/:isbn13 Request to retrieve a book by isbn13
  *
- * @apiDescription Request to retrieve a specific book by <code>isbn13</code>.
+ * @apiDescription Request to retrieve a specific book by <code>isbn13</code>. 
  *
- * @apiName GetMessageIsbn
+ * @apiName GetBookIsbn
  * @apiGroup Library
  *
  * @apiParam {number} isbn13 the isbn13 to look up the specific book.
  * 
  * @apiSuccess {Object} entry the message book object for <code>isbn13</code>
  * @apiSuccess {number} entry.isbn13 <code>isbn13</code>
- * @apiSuccess {string} entry.authors the author of the book associated <code>isbn13</code>
+ * @apiSuccess {string} entry.authors the author of the book associated with <code>isbn13</code>
  * @apiSuccess {number} entry.publication_year the published year of the book associated with <code>isbn13</code>
  * @apiSuccess {string} entry.title the book title associated with <code>isbn13</code>
  * @apiSuccess {number} entry.rating_avg The average rating of the book associated with <code>isbn13</code>
@@ -718,14 +712,14 @@ libraryRouter.get(
  * @apiParam {string} title the title to look up the specific book.
  * 
  * @apiSuccess {Object} entry the message book object for <code>title</code>
- * @apiSuccess {number} entry.isbn13 the isbn13 of the book associated with <code>title</code>
+ * @apiSuccess {number} entry.isbn13 the ISBN of the book associated with <code>title</code>
  * @apiSuccess {string} entry.authors the author of the book associated with <code>title</code>
  * @apiSuccess {number} entry.publication_year the published year of the book associated with <code>title</code>
  * @apiSuccess {string} entry.title the book title associated with <code>title</code>
  * @apiSuccess {number} entry.rating_avg The average rating of the book associated with <code>title</code>
-
+ * 
  *
- * @apiError (400: Invalid title) {String} message "Invalid or missing title - please refer to documentation"
+ * @apiError (400: Invalid title) {String} message "Invalid or missing title  - please refer to documentation"
  * @apiError (404: Book Not Found) {string} message "No book associated with this title was found"
  *
  */
@@ -761,18 +755,19 @@ libraryRouter.get(
 );
 
 /**
- * @api {get} /library/retrieve/Author/:author Request to retrieve books by author's name
+ * @api {get} /library?author= Request to retrieve books by author's name
  *
  * @apiDescription Request to retrieve the information about all books written by <code>author</code>.
- *  
- * @apiName GetMessageAuthor
+ *
+ * @apiName GetBookAuthor
  * @apiGroup Library
  *
- * @apiParam {string} author the author to look up.
+ * @apiQuery {string} author the author to look up.
  *
  * @apiSuccess {String[]} entries the aggregate of all entries as the following string:
- *      "{<code>title</code>} by <code>author</code> - ISBN: <code>isbn13</code>, published in <code>publication_year</code>, average rating: <code>rating_avg</code>"
+ *      "{<code>title</code>} by <code>authors</code> - ISBN: <code>isbn13</code>, published in <code>publication_year</code>, average rating: <code>rating_avg</code>"
  *
+ * @apiError (400: Invalid author) {String} message "Invalid or missing author  - please refer to documentation"
  * @apiError (404: Book Not Found) {string} message "No book associated with this author was found"
  *
  */
@@ -813,17 +808,19 @@ libraryRouter.get('/', (request: Request, response: Response, next) => {
 });
 
 /**
- * @api {get} /library?date= Request to retrieve books by publication year.
- * @apiDescription Request to retrieve the information about all books published in <code>date</code>.
+ * @api {get} /library?publication_year= Request to retrieve books by original publication year
  *
- * @apiName GetMessageDate
+ * @apiDescription Request to retrieve the information about all books published in <code>publication_year</code>.
+ *
+ * @apiName GetBookPublicationYear
  * @apiGroup Library
  *
- * @apiQuery {number} date the publication year to look up.
+ * @apiQuery {number} publication_year the publication year to look up.
  *
  * @apiSuccess {String[]} entries the aggregate of all entries as the following string:
  *      "{<code>title</code>} by <code>author</code> - ISBN: <code>isbn13</code>, published in <code>publication_year</code>, average rating: <code>rating_avg</code>"
  *
+ * @apiError (400: Invalid publication year) {String} message "Invalid or missing publication_year  - please refer to documentation"
  * @apiError (404: Book Not Found) {string} message "No book associated with this publication year was found"
  *
  */
@@ -876,6 +873,7 @@ libraryRouter.get('/', (request: Request, response: Response, next) => {
  * @apiSuccess {String[]} entries the aggregate of all entries as the following string:
  *      "{<code>title</code>} by <code>authors</code> - ISBN: <code>isbn13</code>, published in <code>publication_year</code>, average rating: <code>rating_avg</code>"
  *
+ * @apiError (400: Invalid rating_avg) {string} message "Invalid or missing rating_avg - please refer to documentation"
  * @apiError (404: Book Not Found) {string} message "No book associated with this rating_avg was found"
  *
  */
