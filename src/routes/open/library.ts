@@ -51,22 +51,6 @@ function mwValidPriorityQuery(
     }
 }
 
-function mwValidISBNQuery(
-    request: Request,
-    response: Response,
-    next: NextFunction
-) {
-    const ISBN: string = request.query.ISBN as string;
-    if (validationFunctions.isNumberProvided(ISBN)) {
-        next();
-    } else {
-        console.error('Invalid or missing ISBN');
-        response.status(400).send({
-            message: 'Invalid or missing ISBN - please refer to documentation',
-        });
-    }
-}
-
 function mwValidAuthorQuery(
     request: Request,
     response: Response,
@@ -260,7 +244,7 @@ const checkBookExists = async (title: string) => {
  * @apiName PostMessage
  * @apiGroup Library
  *
- * @apiBody {number} ISBN ISBN *unique
+ * @apiBody {number} isbn13 isbn13 *unique
  * @apiBody {string} title Title of the book *unique
  * @apiBody {string} author Author of the book
  * @apiBody {number} date The publication year
@@ -273,9 +257,9 @@ const checkBookExists = async (title: string) => {
  *
  * @apiSuccess (Success 201) {JSON} Book The entered book object
  *
- * @apiError (400: ISBN exists) {String} message "ISBN already exists"
+ * @apiError (400: isbn13 exists) {String} message "isbn13 already exists"
  * @apiError (400: Title exists) {String} message "Title already exists"
- * @apiError (400: Invalid ISBN) {String} message "Invalid or Missing ISBN - please refer to documentation"
+ * @apiError (400: Invalid isbn13) {String} message "Invalid or Missing isbn13 - please refer to documentation"
  * @apiError (400: Invalid title) {String} message "Invalid or Missing book title - please refer to documentation"
  * @apiError (400: Invalid author) {String} message "Invalid or Missing book author - please refer to documentation"
  * @apiError (400: Invalid date) {String} message "Invalid or Missing publication date - please refer to documentation"
@@ -294,10 +278,10 @@ libraryRouter.post(
         ) {
             //next();
         } else {
-            console.error('Invalid ISBN');
+            console.error('Invalid isbn13');
             return response.status(400).send({
                 message:
-                    'Invalid or missing ISBN - please refer to documentation',
+                    'Invalid or missing isbn13 - please refer to documentation',
             });
         }
         const Title: string = request.body.title as string;
@@ -441,9 +425,9 @@ libraryRouter.post(
                     error.detail.includes('already exists') &&
                     error.detail.includes('isbn')
                 ) {
-                    console.error('IBSN exists');
+                    console.error('isbn13 exists');
                     return response.status(400).send({
-                        message: 'ISBN already exists',
+                        message: 'isbn13 already exists',
                     });
                 } else {
                     console.error('DB Query error on POST');
@@ -539,21 +523,21 @@ libraryRouter.put('/update/ratings', async (req: Request, res: Response) => {
 });
 
 /**
- * @api {delete} /library/remove/ISBN/:ISBN Request to remove book entries by ISBN
+ * @api {delete} /library/remove/ISBN/:isbn13 Request to remove book entries by isbn13
  *
- * @apiDescription Request to remove all entries of <code>isbn</code>
+ * @apiDescription Request to remove all entries of <code>isbn13</code>
  *
- * @apiName DeleteISBN
+ * @apiName Deleteisbn13
  * @apiGroup Library
  *
- * @apiParam {number} ISBN The ISBN of the book to remove
+ * @apiParam {number} isbn13 The isbn13 of the book to remove
  *
  *
  * @apiSuccess {String[]} entries The list of deleted entries, formatted as:
  *      "ISBN: <code>isbn</code>, Title: <code>title</code>"
  *
- * @apiError (400: Invalid or missing ISBN) {String} message "Invalid or missing isbn13 - please refer to documentation"
- * @apiError (404: No ISBN found) {String} message "No book for isbn13 ${request.params.isbn13} found"
+ * @apiError (400: Invalid or missing isbn13) {String} message "Invalid or missing isbn13 - please refer to documentation"
+ * @apiError (404: No isbn13 found) {String} message "No book for isbn13 ${request.params.isbn13} found"
  */
 libraryRouter.delete(
     '/remove/ISBN/:isbn13',
@@ -576,7 +560,7 @@ libraryRouter.delete(
             })
             .catch((error) => {
                 //log the error
-                console.error('DB Query error on DELETE by ISBN');
+                console.error('DB Query error on DELETE by isbn13');
                 console.error(error);
                 response.status(500).send({
                     message: 'server error - contact support',
@@ -622,7 +606,7 @@ libraryRouter.delete(
             })
             .catch((error) => {
                 //log the error
-                console.error('DB Query error on DELETE by ISBN');
+                console.error('DB Query error on DELETE by isbn13');
                 console.error(error);
                 response.status(500).send({
                     message: 'server error - contact support',
@@ -734,7 +718,7 @@ libraryRouter.get(
  * @apiParam {string} title the title to look up the specific book.
  * 
  * @apiSuccess {Object} entry the message book object for <code>title</code>
- * @apiSuccess {number} entry.isbn13 the ISBN of the book associated with <code>title</code>
+ * @apiSuccess {number} entry.isbn13 the isbn13 of the book associated with <code>title</code>
  * @apiSuccess {string} entry.authors the author of the book associated with <code>title</code>
  * @apiSuccess {number} entry.publication_year the published year of the book associated with <code>title</code>
  * @apiSuccess {string} entry.title the book title associated with <code>title</code>

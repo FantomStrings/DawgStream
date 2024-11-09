@@ -13,43 +13,6 @@ const format = (resultRow) => ({
 const isStringProvided = validationFunctions.isStringProvided;
 const isNumberProvided = validationFunctions.isNumberProvided;
 
-/**
- * @apiDefine JWT
- * @apiHeader {String} Authorization The string "Bearer " + a valid JSON Web Token (JWT).
- */
-
-/**
- * @api {get} /c/library/offset Request to retrieve entries by offset pagination
- *
- * @apiDescription Request to retrieve paginated the entries using an entry limit and offset.
- *
- * @apiName Messages Offset Pagination
- * @apiGroup Pagination Examples
- *
- * @apiUse JWT
- *
- * @apiQuery {number} limit the number of entry objects to return. Note, if a value less than
- * 0 is provided or a non-numeric value is provided or no value is provided, the default limit
- * amount of 10 will be used.
- *
- * @apiQuery {number} offset the number to offset the lookup of entry objects to return. Note,
- * if a value less than 0 is provided or a non-numeric value is provided or no value is provided,
- * the default offset of 0 will be used.
- *
- * @apiSuccess {Object} pagination metadata results from this paginated query
- * @apiSuccess {number} pagination.totalRecords the most recent count on the total amount of entries. May be stale.
- * @apiSuccess {number} pagination.limit the number of entry objects to returned.
- * @apiSuccess {number} pagination.offset the number used to offset the lookup of entry objects.
- * @apiSuccess {number} pagination.nextPage the offset that should be used on a preceding call to this route.
- *
- * @apiSuccess {Object[]} entries the message entry objects of all entries
- * @apiSuccess {string} entries.name <code>name</code>
- * @apiSuccess {string} entries.message The message associated with <code>name</code>
- * @apiSuccess {number} entries.priority The priority associated with <code>name</code>
- * @apiSuccess {string} entries.formatted the entry as the following string:
- *      "{<code>priority</code>} - [<code>name</code>] says: <code>message</code>"
- *
- */
 libraryRouter.get('/offset', async (request: Request, response: Response) => {
     const theQuery = `SELECT name, message, priority 
                         FROM Demo 
@@ -98,37 +61,7 @@ libraryRouter.get('/offset', async (request: Request, response: Response) => {
     });
 });
 
-/**
- * @api {get} /c/library/cursor Request to retrieve entries by cursor pagination
- *
- * @apiDescription Request to retrieve paginated the entries using a cursor.
- *
- * @apiName Messages Cursor Pagination
- * @apiGroup Pagination Examples
- *
- * @apiUse JWT
- *
- * @apiQuery {number} limit the number of entry objects to return. Note, if a value less than
- * 0 is provided or a non-numeric value is provided or no value is provided, the default limit
- * amount of 10 will be used.
- *
- * @apiQuery {number} cursor the value used in the lookup of entry objects to return. When no cursor is
- * provided, the result is the first set of paginated entries.  Note, if a value less than 0 is provided
- * or a non-numeric value is provided results will be the same as not providing a cursor.
- *
- * @apiSuccess {Object} pagination metadata results from this paginated query
- * @apiSuccess {number} pagination.totalRecords the most recent count on the total amount of entries. May be stale.
- * @apiSuccess {number} pagination.limit the number of entry objects to returned.
- * @apiSuccess {number} pagination.cursor the value that should be used on a preceding call to this route.
- *
- * @apiSuccess {Object[]} entries the message entry objects of all entries
- * @apiSuccess {string} entries.name <code>name</code>
- * @apiSuccess {string} entries.message The message associated with <code>name</code>
- * @apiSuccess {number} entries.priority The priority associated with <code>name</code>
- * @apiSuccess {string} entries.formatted the entry as the following string:
- *      "{<code>priority</code>} - [<code>name</code>] says: <code>message</code>"
- *
- */
+
 libraryRouter.get('/cursor', async (request: Request, response: Response) => {
     const theQuery = `SELECT name, message, priority, DemoID 
                         FROM Demo
@@ -169,32 +102,6 @@ libraryRouter.get('/cursor', async (request: Request, response: Response) => {
     });
 });
 
-/**
- * @api {post} /c/library Request to add an entry
- *
- * @apiDescription Request to add a message and someone's name to the DB
- *
- * @apiName ClosedPostMessage
- * @apiGroup *Closed Message
- *
- * @apiUse JWT
- *
- * @apiBody {string} name someone's name *unique
- * @apiBody {string} message a message to store with the name
- * @apiBody {number} priority a message priority [1-3]
- *
- * @apiSuccess {Object} entry the message entry objects of all entries
- * @apiSuccess {string} entry.name <code>name</code>
- * @apiSuccess {string} entry.message The message associated with <code>name</code>
- * @apiSuccess {number} entry.priority The priority associated with <code>name</code>
- * @apiSuccess {string} entry.formatted the entry as the following string:
- *      "{<code>priority</code>} - [<code>name</code>] says: <code>message</code>"
- *
- * @apiError (400: Name exists) {String} message "Name exists"
- * @apiError (400: Missing Parameters) {String} message "Missing required information - please refer to documentation"
- * @apiError (400: Invalid Priority) {String} message "Invalid or missing Priority  - please refer to documentation"
- * @apiError (400: JSON Error) {String} message "malformed JSON in parameters"
- */
 libraryRouter.post(
     '/',
     (request: Request, response: Response, next: NextFunction) => {
@@ -263,23 +170,6 @@ libraryRouter.post(
     }
 );
 
-/**
- * @api {delete} /c/library/:name Request to remove an entry by name
- *
- * @apiDescription Request to remove an entry associated with <code>name</code> in the DB
- *
- * @apiName ClosedDeleteMessage
- * @apiGroup *Closed Message
- *
- * @apiUse JWT
- *
- * @apiParam {String} name the name associated with the entry to delete
- *
- * @apiSuccess {String} entry the string
- *      "Deleted: {<code>priority</code>} - [<code>name</code>] says: <code>message</code>"
- *
- * @apiError (404: Name Not Found) {String} message "Name not found"
- */
 libraryRouter.delete('/:name', async (request: Request, response: Response) => {
     const theQuery = 'DELETE FROM Demo  WHERE name = $1 RETURNING *';
     const values = [request.params.name];
