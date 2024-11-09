@@ -85,6 +85,24 @@ function mwValidAuthorQuery(
         });
     }
 }
+function myValidPublicationYearQuery(
+    request: Request,
+    response: Response,
+    next: NextFunction
+) {
+    const publishedYear: string = request.query.publication_year as string;
+    if (
+        validationFunctions.isNumberProvided(publishedYear) &&
+        publishedYear.length == 4
+    ) {
+        next();
+    } else {
+        response.status(400).send({
+            message:
+                'Invalid or missing publication_year - please refer to documentation',
+        });
+    }
+}
 
 function mwValidNameMessageBody(
     request: Request,
@@ -399,7 +417,7 @@ libraryRouter.post(
                 // result.rows array are the records returned from the SQL statement.
                 // An INSERT statement will return a single row, the row that was inserted.
                 //entries: format(result.rows[0]),
-                let Book = {
+                const Book = {
                     ISBN: request.body.ISBN,
                     author: request.body.author,
                     date: request.body.publicationYear,
@@ -455,199 +473,6 @@ libraryRouter.post(
                         message: 'server error - contact support',
                     });
                 }
-            });
-    }
-);
-
-/**
- * @api {get} /library/retrieve Request to retrieve all books
- *
- * @apiDescription Request to retrieve the information about all books
- *
- * @apiName RetrieveAllBooks
- * @apiGroup Library
- *
- * @apiSuccess {String[]} entries the aggregate of all entries as the following string:
- *      "{<code>title</code>} by <code>authors</code> - ISBN: <code>isbn13</code>, published in <code>publication_year</code>, average rating: <code>rating_avg</code>"
- *
- * @apiError (404: Books Not Found) {string} message "No books found"
- *
- */
-libraryRouter.get('/retrieve', (request: Request, response: Response) => {
-    const theQuery =
-        'SELECT title, authors, isbn13, publication_year, rating_avg, rating_count FROM BOOKS';
-
-    pool.query(theQuery)
-        .then((result) => {
-            if (result.rowCount > 0) {
-                response.send({
-                    entries: result.rows.map(format),
-                });
-            } else {
-                response.status(404).send({
-                    message: 'Book not found',
-                });
-            }
-        })
-        .catch((error) => {
-            //log the error
-            console.error('DB Query error on GET retrieve');
-            console.error(error);
-            response.status(500).send({
-                message: 'server error - contact support',
-            });
-        });
-});
-
-/**
- * @api {get} /library/:isbn13 Request to retrieve a book by isbn13
- *
- * @apiDescription Request to retrieve a specific book by <code>isbn13</code>.
- *
- * @apiName GetMessageIsbn
- * @apiGroup Library
- *
- * @apiParam {number} isbn13 the isbn13 to look up the specific book.
- * 
- * @apiSuccess {Object} entry the message book object for <code>isbn13</code>
- * @apiSuccess {number} entry.isbn13 <code>isbn13</code>
- * @apiSuccess {string} entry.authors the author of the book associated <code>isbn13</code>
- * @apiSuccess {number} entry.publication_year the published year of the book associated with <code>isbn13</code>
- * @apiSuccess {string} entry.title the book title associated with <code>isbn13</code>
- * @apiSuccess {number} entry.rating_avg The average rating of the book associated with <code>isbn13</code>
-
- *
- * @apiError (400: Invalid isbn13) {String} message "Invalid or missing isbn13  - please refer to documentation"
- * @apiError (404: Book Not Found) {string} message "No book associated with this isbn13 was found"
- *
- */
-libraryRouter.get(
-    '/isbn13/:isbn13',
-    myValidIsbn13Param,
-    (request: Request, response: Response) => {
-        const theQuery =
-            'SELECT isbn13, authors, publication_year, title, rating_avg FROM BOOKS WHERE isbn13 = $1';
-        const values = [request.params.isbn13];
-
-        pool.query(theQuery, values)
-            .then((result) => {
-                if (result.rowCount == 1) {
-                    response.send({
-                        entry: result.rows[0],
-                    });
-                } else {
-                    response.status(404).send({
-                        message: 'No book associated with this ISBN was found',
-                    });
-                }
-            })
-            .catch((error) => {
-                //log the error
-                console.error('DB Query error on GET /:isbn13');
-                console.error(error);
-                response.status(500).send({
-                    message: 'server error - contact support',
-                });
-            });
-    }
-);
-
-/**
- * @api {get} /library/title/:title Request to retrieve a book by title
- *
- * @apiDescription Request to retrieve a specific book by <code>title</code>. 
- *
- * @apiName RetrieveBookTitle
- * @apiGroup Library
- *
- * @apiParam {string} title the title to look up the specific book.
- * 
- * @apiSuccess {Object} entry the message book object for <code>title</code>
- * @apiSuccess {number} entry.isbn13 the ISBN of the book associated with <code>title</code>
- * @apiSuccess {string} entry.authors the author of the book associated with <code>title</code>
- * @apiSuccess {number} entry.publication_year the published year of the book associated with <code>title</code>
- * @apiSuccess {string} entry.title the book title associated with <code>title</code>
- * @apiSuccess {number} entry.rating_avg The average rating of the book associated with <code>title</code>
-
- *
- * @apiError (400: Invalid title) {String} message "Invalid or missing title  - please refer to documentation"
- * @apiError (404: Book Not Found) {string} message "No book associated with this title was found"
- *
- */
-libraryRouter.get(
-    '/title/:title',
-    myValidTitleParam,
-    (request: Request, response: Response) => {
-        const theQuery =
-            'SELECT isbn13, authors, publication_year, title, rating_avg FROM BOOKS where title = $1';
-        const values = [request.params.title];
-
-        pool.query(theQuery, values)
-            .then((result) => {
-                if (result.rowCount > 0) {
-                    response.send({
-                        entries: result.rows[0],
-                    });
-                } else {
-                    response.status(404).send({
-                        message: `No books with the title ${request.params.title} were found`,
-                    });
-                }
-            })
-            .catch((error) => {
-                //log the error
-                console.error('DB Query error on GET by title');
-                console.error(error);
-                response.status(500).send({
-                    message: 'server error - contact support',
-                });
-            });
-    }
-);
-
-/**
- * @api {get} /library?rating_avg= Request to retrieve books by rating average
- *
- * @apiDescription Request to retrieve the information about all books with the given <code>rating_avg</code>
- *
- * @apiName RetrieveByRatingAvg
- * @apiGroup Library
- *
- * @apiQuery {number} rating_avg the rating_avg to look up.
- *
- * @apiSuccess {String[]} entries the aggregate of all entries as the following string:
- *      "{<code>title</code>} by <code>authors</code> - ISBN: <code>isbn13</code>, published in <code>publication_year</code>, average rating: <code>rating_avg</code>"
- *
- * @apiError (404: Book Not Found) {string} message "No book associated with this rating_avg was found"
- *
- */
-libraryRouter.get(
-    '/averageRating',
-    mwValidRatingAverageQuery,
-    (request: Request, response: Response) => {
-        const theQuery =
-            'SELECT isbn13, authors, publication_year, title, rating_avg FROM BOOKS where rating_avg = $1';
-        const values = [request.query.rating_avg];
-
-        pool.query(theQuery, values)
-            .then((result) => {
-                if (result.rowCount > 0) {
-                    response.send({
-                        entries: result.rows,
-                    });
-                } else {
-                    response.status(404).send({
-                        message: `No book associated with this rating was found`,
-                    });
-                }
-            })
-            .catch((error) => {
-                //log the error
-                console.error('DB Query error on GET by rating_avg');
-                console.error(error);
-                response.status(500).send({
-                    message: 'server error - contact support',
-                });
             });
     }
 );
@@ -749,7 +574,7 @@ libraryRouter.put('/update/ratings', async (req: Request, res: Response) => {
  *      "ISBN: <code>isbn</code>, Title: <code>title</code>"
  *
  * @apiError (400: Invalid or missing ISBN) {String} message "Invalid or missing ISBN - please refer to documentation"
- * @apiError (404: No ISBN found) {String} message "No matching <code>isbn</code> entries found"
+ * @apiError (404: No ISBN found) {String} message "No book for ISBN ${request.params.isbn13} found"
  */
 libraryRouter.delete(
     '/remove/ISBN/:isbn13',
@@ -795,7 +620,7 @@ libraryRouter.delete(
  * @apiSuccess {String} entries A string of the deleted book entry, formatted as:
  *     "Deleted: ISBN: <code>isbn</code>, Title: <code>title</code>"
  *
- * @apiError (404: Author Not Found) {String} message "Author not found"
+ * @apiError (404: Author Not Found) {String} message "No book associated with this author was found"
  */
 libraryRouter.delete(
     '/remove/author/:author',
@@ -830,58 +655,98 @@ libraryRouter.delete(
 
 // Section 4: Commented Code
 
-/*libraryRouter.post(
-    '/',
-    mwValidNameMessageBody,
-    (request: Request, response: Response, next: NextFunction) => {
-        const priority: string = request.body.priority as string;
-        if (
-            validationFunctions.isNumberProvided(priority) &&
-            parseInt(priority) >= 1 &&
-            parseInt(priority) <= 3
-        ) {
-            next();
-        } else {
-            console.error('Invalid or missing Priority');
-            response.status(400).send({
-                message:
-                    'Invalid or missing Priority - please refer to documentation',
-            });
-        }
-    },
-    (request: Request, response: Response) => {
-        // code
-    }
-);*/
-
 /**
- * @api {post} /library/add Request to add an entry
+ * @api {get} /library/retrieve Request to retrieve all books
  *
- * @apiDescription Request to add a book to the DB
+ * @apiDescription Request to retrieve the information about all books
  *
- * @apiName PostMessage
+ * @apiName RetrieveAllBooks
  * @apiGroup Library
  *
- * @apiBody {number} ISBN ISBN *unique
- * @apiBody {string} Title Title of the book *unique
- * @apiBody {string} Author Author of the book
- * @apiBody {number} Date The publication year
- * @apiBody {number} [totalRatings] total number of ratings
- * @apiBody {number} [1Star] number of 1 star reviews
- * @apiBody {number} [2Star] number of 2 star reviews
- * @apiBody {number} [3Star] number of 3 star reviews
- * @apiBody {number} [4Star] number of 4 star reviews
- * @apiBody {number} [5Star] number of 5 star reviews
+ * @apiSuccess {String[]} entries the aggregate of all entries as the following string:
+ *      "{<code>title</code>} by <code>authors</code> - ISBN: <code>isbn13</code>, published in <code>publication_year</code>, average rating: <code>rating_avg</code>"
  *
- * @apiSuccess (Success 201) {JSON} Book The entered book object
+ * @apiError (404: Books Not Found) {string} message "Book not found"
  *
- * @apiError (400: ISBN exists) {String} message "ISBN already exists"
- * @apiError (400: Missing ISBN) {String} message "Missing ISBN - please refer to documentation"
- * @apiError (400: Missing title) {String} message "Missing book title - please refer to documentation"
- * @apiError (400: Missing author) {String} message "Missing book author - please refer to documentation"
- * @apiError (400: Missing Parameters) {String} message "Missing required information - please refer to documentation"
- * @apiUse JSONError
  */
+libraryRouter.get('/retrieve', (request: Request, response: Response) => {
+    const theQuery =
+        'SELECT title, authors, isbn13, publication_year, rating_avg, rating_count FROM BOOKS';
+
+    pool.query(theQuery)
+        .then((result) => {
+            if (result.rowCount > 0) {
+                response.send({
+                    entries: result.rows.map(format),
+                });
+            } else {
+                response.status(404).send({
+                    message: 'Book not found',
+                });
+            }
+        })
+        .catch((error) => {
+            //log the error
+            console.error('DB Query error on GET retrieve');
+            console.error(error);
+            response.status(500).send({
+                message: 'server error - contact support',
+            });
+        });
+});
+
+/**
+ * @api {get} /library/:isbn13 Request to retrieve a book by isbn13
+ *
+ * @apiDescription Request to retrieve a specific book by <code>isbn13</code>.
+ *
+ * @apiName GetMessageIsbn
+ * @apiGroup Library
+ *
+ * @apiParam {number} isbn13 the isbn13 to look up the specific book.
+ * 
+ * @apiSuccess {Object} entry the message book object for <code>isbn13</code>
+ * @apiSuccess {number} entry.isbn13 <code>isbn13</code>
+ * @apiSuccess {string} entry.authors the author of the book associated <code>isbn13</code>
+ * @apiSuccess {number} entry.publication_year the published year of the book associated with <code>isbn13</code>
+ * @apiSuccess {string} entry.title the book title associated with <code>isbn13</code>
+ * @apiSuccess {number} entry.rating_avg The average rating of the book associated with <code>isbn13</code>
+
+ *
+ * @apiError (400: Invalid isbn13) {String} message "Invalid or missing isbn13  - please refer to documentation"
+ * @apiError (404: Book Not Found) {string} message "No book associated with this isbn13 was found"
+ *
+ */
+libraryRouter.get(
+    '/isbn13/:isbn13',
+    myValidIsbn13Param,
+    (request: Request, response: Response) => {
+        const theQuery =
+            'SELECT isbn13, authors, publication_year, title, rating_avg FROM BOOKS WHERE isbn13 = $1';
+        const values = [request.params.isbn13];
+
+        pool.query(theQuery, values)
+            .then((result) => {
+                if (result.rowCount == 1) {
+                    response.send({
+                        entry: result.rows[0],
+                    });
+                } else {
+                    response.status(404).send({
+                        message: 'No book associated with this ISBN was found',
+                    });
+                }
+            })
+            .catch((error) => {
+                //log the error
+                console.error('DB Query error on GET /:isbn13');
+                console.error(error);
+                response.status(500).send({
+                    message: 'server error - contact support',
+                });
+            });
+    }
+);
 
 /**
  * @api {get} /library/retrieve/Author/:author Request to retrieve books by author's name
@@ -934,28 +799,9 @@ libraryRouter.get('/', (request: Request, response: Response, next) => {
         next();
     }
 });
-function myValidPublicationYearQuery(
-    request: Request,
-    response: Response,
-    next: NextFunction
-) {
-    const publishedYear: string = request.query.publication_year as string;
-    if (
-        validationFunctions.isNumberProvided(publishedYear) &&
-        publishedYear.length == 4
-    ) {
-        next();
-    } else {
-        response.status(400).send({
-            message:
-                'Invalid or missing publication_year - please refer to documentation',
-        });
-    }
-}
 
 /**
- * @api {get} /library/retrieve/Date/:date Request to retrieve books by original publication date
- *
+ * @api {get} /library?date= Request to retrieve books by publication year.
  * @apiDescription Request to retrieve the information about all books published in <code>date</code>.
  *
  * @apiName GetMessageDate
@@ -1051,107 +897,5 @@ libraryRouter.get(
             });
     }
 );
-
-/**
- * @api {get} /library/all Request to all retrieve entries
- *
- * @apiDescription Request to retrieve all the entries
- *
- * @apiName GetAllMessages
- * @apiGroup Message
- *
- * @apiSuccess {String[]} entries the aggregate of all entries as the following string:
- *      "{<code>priority</code>} - [<code>name</code>] says: <code>message</code>"
- */
-
-/**
- * @api {get} /library Request to retrieve entries by priority
- *
- * @apiDescription Request to retrieve all the entries of <code>priority</code>
- *
- * @apiName GetAllMessagesPri
- * @apiGroup Message
- *
- * @apiQuery {number} priority the priority in which to retrieve all entries
- *
- * @apiSuccess {String[]} entries the aggregate of all entries with <code>priority</code> as the following string:
- *      "{<code>priority</code>} - [<code>name</code>] says: <code>message</code>"
- *
- * @apiError (400: Invalid Priority) {String} message "Invalid or missing Priority  - please refer to documentation"
- * @apiError (404: No messages) {String} message "No Priority <code>priority</code> messages found"
- */
-
-/**
- * @api {get} /library/:name Request to retrieve an entry by name
- *
- * @apiDescription Request to retrieve the complete entry for <code>name</code>.
- * Note this endpoint returns an entry as an object, not a formatted string like the
- * other endpoints.
- *
- * @apiName GetMessageName
- * @apiGroup Message
- *
- * @apiParam {string} name the name to look up.
- *
- * @apiSuccess {Object} entry the message entry object for <code>name</code>
- * @apiSuccess {string} entry.name <code>name</code>
- * @apiSuccess {string} entry.message The message associated with <code>name</code>
- * @apiSuccess {number} entry.priority The priority associated with <code>name</code>
- *
- * @apiError (404: Name Not Found) {string} message "Name not found"
- */
-
-/**
- * @api {put} /library Request to change an entry
- *
- * @apiDescription Request to replace the message entry in the DB for name
- *
- * @apiName PutMessage
- * @apiGroup Message
- *
- * @apiBody {String} name the name entry
- * @apiBody {String} message a message to replace with the associated name
- *
- * @apiSuccess {String} entry the string
- *      "Updated: {<code>priority</code>} - [<code>name</code>] says: <code>message</code>"
- *
- * @apiError (404: Name Not Found) {String} message "Name not found"
- * @apiError (400: Missing Parameters) {String} message "Missing required information" *
- * @apiUse JSONError
- */
-
-/**
- * @api {delete} /library Request to remove entries by priority
- *
- * @apiDescription Request to remove all entries of <code>priority</code>
- *
- * @apiName DeleteMessagesPri
- * @apiGroup Message
- *
- * @apiQuery {number} priority the priority [1-3] to delete all entries
- *
- * @apiSuccess {String[]} entries the aggregate of all deleted entries with <code>priority</code> as the following string:
- *      "{<code>priority</code>} - [<code>name</code>] says: <code>message</code>"
- *
- * @apiError (400: Invalid or missing Priority) {String} message "Invalid or missing Priority - please refer to documentation"
- * @apiError (404: No messages) {String} message "No Priority <code>priority</code> messages found"
- */
-
-/**
- * @api {delete} /library/:name Request to remove an entry by name
- *
- * @apiDescription Request to remove an entry associated with <code>name</code> in the DB
- *
- * @apiName DeleteMessage
- * @apiGroup Message
- *
- * @apiParam {String} name the name associated with the entry to delete
- *
- * @apiSuccess {String} entry the string
- *      "Deleted: {<code>priority</code>} - [<code>name</code>] says: <code>message</code>"
- *
- * @apiError (404: Name Not Found) {String} message "Name not found"
- */
-
 // "return" the router
 export { libraryRouter };
