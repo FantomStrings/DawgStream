@@ -70,7 +70,6 @@ const emailMiddlewareCheck = (
  * @apiBody {String} email a users email *unique
  * @apiBody {String} password a users password
  * @apiBody {String} username a username *unique
- * @apiBody {String} role a role for this user [1-5]
  * @apiBody {String} phone a phone number for this user
  *
  * @apiSuccess (Success 201) {string} accessToken a newly created JWT
@@ -86,10 +85,8 @@ const emailMiddlewareCheck = (
  */
 registerRouter.post(
     '/register',
-    emailMiddlewareCheck, // these middleware functions may be defined elsewhere!
+    emailMiddlewareCheck,
     (request: Request, response: Response, next: NextFunction) => {
-        //Verify that the caller supplied all the parameters
-        //In js, empty strings or null values evaluate to false
         if (
             isStringProvided(request.body.firstname) &&
             isStringProvided(request.body.lastname) &&
@@ -124,7 +121,7 @@ registerRouter.post(
             });
         }
     },
-    
+
     (request: IUserRequest, response: Response, next: NextFunction) => {
         const theQuery =
             'INSERT INTO Account(firstname, lastname, username, email, phone, account_role) VALUES ($1, $2, $3, $4, $5, $6) RETURNING account_id';
@@ -139,14 +136,11 @@ registerRouter.post(
         console.dir({ ...request.body, password: '******' });
         pool.query(theQuery, values)
             .then((result) => {
-                //stash the account_id into the request object to be used in the next function
-                // NOTE the TYPE for the Request object in this middleware function
                 request.id = result.rows[0].account_id;
                 next();
             })
             .catch((error) => {
                 //log the error
-                // console.log(error)
                 if (error.constraint == 'account_username_key') {
                     response.status(400).send({
                         message: 'Username exists',
@@ -166,10 +160,6 @@ registerRouter.post(
             });
     },
     (request: IUserRequest, response: Response) => {
-        //We're storing salted hashes to make our application more secure
-        //If you're interested as to what that is, and why we should use it
-        //watch this youtube video: https://www.youtube.com/watch?v=8ZtInClXe1Q
-        const salt = generateSalt(32);
         const saltedHash = generateHash(request.body.password, salt);
 
         const theQuery =
@@ -184,23 +174,16 @@ registerRouter.post(
                     },
                     key.secret,
                     {
-                        expiresIn: '14 days', // expires in 14 days
+                        expiresIn: '14 days',
                     }
                 );
-                //We successfully added the user!
+
                 response.status(201).send({
                     accessToken,
                     id: request.id,
                 });
             })
             .catch((error) => {
-                /***********************************************************************
-                 * If we get an error inserting the PWD, we should go back and remove
-                 * the user from the member table. We don't want a member in that table
-                 * without a PWD! That implementation is up to you if you want to add
-                 * that step.
-                 **********************************************************************/
-
                 //log the error
                 console.error('DB Query error on register');
                 console.error(error);

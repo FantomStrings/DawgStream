@@ -9,8 +9,6 @@ const libraryRouter: Router = express.Router();
 
 const isStringProvided = validationFunctions.isStringProvided;
 
-/*const format = (resultRow) =>
-    `{${resultRow.priority}} - [${resultRow.name}] says: ${resultRow.message}`;*/
 const format = (resultRow) =>
     `{'ISBN: ' ${resultRow.isbn13}} - 'Title: '[${resultRow.title}]  ' author '[${resultRow.authors}] ' publication year: [${resultRow.publication_year}] ' rating count: [${resultRow.rating_count}] ' rating average: ' [${resultRow.rating_avg}]`;
 
@@ -227,10 +225,7 @@ const validateUpdateRequest = (req: Request) => {
         };
     }
 
-    // Validate rating counts as non-negative integers
-    console.log('THIS IS WHERE NON NEG IS BEING CHECKED ----------');
     for (const [key, value] of Object.entries(ratings)) {
-        console.log('value: ' + value + ' Type: ' + typeof value);
         if (value != null && (!Number.isInteger(value) || value < 0)) {
             return {
                 valid: false,
@@ -292,8 +287,7 @@ libraryRouter.post(
     '/add',
     (request: Request, response: Response, next: NextFunction) => {
         const ISBN: number = request.body.ISBN as number;
-        console.log('ISBN length: ' + String(ISBN).length);
-        console.log('isbn number: ' + ISBN);
+
         if (
             String(ISBN).length == 13 &&
             validationFunctions.isNumberProvided(ISBN)
@@ -351,8 +345,7 @@ libraryRouter.post(
         const threeStar: number = request.body?.threeStar as number;
         const fourStar: number = request.body?.fourStar as number;
         const fiveStar: number = request.body?.fiveStar as number;
-        console.log('here is three star: ' + threeStar);
-        console.log('Type of three star: ' + typeof threeStar);
+
         let averageRating: number;
         if (
             validationFunctions.isNumberProvided(totalRatings) &&
@@ -390,10 +383,6 @@ libraryRouter.post(
         next();
     },
     (request: Request, response: Response) => {
-        //We're using placeholders ($1, $2, $3) in the SQL query string to avoid SQL Injection
-        //If you want to read more: https://stackoverflow.com/a/8265319
-
-        //NOTE: how are we handling the optional reviews?
         const theQuery =
             'INSERT INTO BOOKS(isbn13, authors, publication_year, title, rating_avg, rating_count, rating_1_star, rating_2_star, rating_3_star, rating_4_star, rating_5_star, image_url, image_small_url) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *';
         const values = [
@@ -433,21 +422,13 @@ libraryRouter.post(
                     imageSmallURL: request.body.imageSmallURL,
                 };
                 return response.status(201).send({
-                    //entries: format(result.rows[0]),
-                    Book, //: format(result.rows[0]), //might need to change this?
+                    Book,
                 });
             })
-            /*return response.status(201).send({
-                    entries: format(result.rows[0]),*/
-            //Book, //: format(result.rows[0]), //might need to change this?
-            //});
-            //})
+
             .catch((error) => {
-                //Change how ends with is caught, since we have two uniques.
-                console.log('ERROR DETAILS: ' + error.detail);
                 if (
                     error.detail != undefined &&
-                    //(error.detail as string).endsWith('already exists.')
                     error.detail.includes('already exists') &&
                     error.detail.includes('title')
                 ) {
@@ -457,7 +438,6 @@ libraryRouter.post(
                     });
                 } else if (
                     error.detail != undefined &&
-                    //(error.detail as string).endsWith('already exists.')
                     error.detail.includes('already exists') &&
                     error.detail.includes('isbn')
                 ) {
@@ -466,7 +446,6 @@ libraryRouter.post(
                         message: 'ISBN already exists',
                     });
                 } else {
-                    //log the error
                     console.error('DB Query error on POST');
                     console.error(error);
                     return response.status(500).send({
@@ -582,7 +561,6 @@ libraryRouter.delete(
     (request: Request, response: Response) => {
         const theQuery = 'DELETE FROM BOOKS WHERE isbn13 = $1 RETURNING *'; //Remember to change table name!
         const values = [request.params.isbn13];
-        console.log(values);
 
         pool.query(theQuery, values)
             .then((result) => {
@@ -652,8 +630,6 @@ libraryRouter.delete(
             });
     }
 );
-
-// Section 4: Commented Code
 
 /**
  * @api {get} /library/retrieve Request to retrieve all books
