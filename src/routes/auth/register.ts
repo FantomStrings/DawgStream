@@ -160,6 +160,8 @@ registerRouter.post(
             });
     },
     (request: IUserRequest, response: Response) => {
+
+        const salt = generateSalt(32);
         const saltedHash = generateHash(request.body.password, salt);
 
         const theQuery =

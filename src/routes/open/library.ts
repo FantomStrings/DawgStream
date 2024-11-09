@@ -723,6 +723,58 @@ libraryRouter.get(
             });
     }
 );
+/**
+ * @api {get} /library/title/:title Request to retrieve a book by title
+ *
+ * @apiDescription Request to retrieve a specific book by <code>title</code>. 
+ *
+ * @apiName RetrieveBookTitle
+ * @apiGroup Library
+ *
+ * @apiParam {string} title the title to look up the specific book.
+ * 
+ * @apiSuccess {Object} entry the message book object for <code>title</code>
+ * @apiSuccess {number} entry.isbn13 the ISBN of the book associated with <code>title</code>
+ * @apiSuccess {string} entry.authors the author of the book associated with <code>title</code>
+ * @apiSuccess {number} entry.publication_year the published year of the book associated with <code>title</code>
+ * @apiSuccess {string} entry.title the book title associated with <code>title</code>
+ * @apiSuccess {number} entry.rating_avg The average rating of the book associated with <code>title</code>
+
+ *
+ * @apiError (400: Invalid title) {String} message "Invalid or missing title - please refer to documentation"
+ * @apiError (404: Book Not Found) {string} message "No book associated with this title was found"
+ *
+ */
+libraryRouter.get(
+    '/title/:title',
+    myValidTitleParam,
+    (request: Request, response: Response) => {
+        const theQuery =
+            'SELECT isbn13, authors, publication_year, title, rating_avg FROM BOOKS where title = $1';
+        const values = [request.params.title];
+
+        pool.query(theQuery, values)
+            .then((result) => {
+                if (result.rowCount == 1) {
+                    response.send({
+                        entry: result.rows[0],
+                    });
+                } else {
+                    response.status(404).send({
+                        message: `No book associated with this title was found`,
+                    });
+                }
+            })
+            .catch((error) => {
+                //log the error
+                console.error('DB Query error on GET by title');
+                console.error(error);
+                response.status(500).send({
+                    message: 'server error - contact support',
+                });
+            });
+    }
+);
 
 /**
  * @api {get} /library/retrieve/Author/:author Request to retrieve books by author's name
