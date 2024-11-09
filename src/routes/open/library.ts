@@ -30,28 +30,7 @@ function myValidAuthorQuery(
     }
 }
 
-function mwValidPriorityQuery(
-    request: Request,
-    response: Response,
-    next: NextFunction
-) {
-    const priority: string = request.query.priority as string;
-    if (
-        validationFunctions.isNumberProvided(priority) &&
-        parseInt(priority) >= 1 &&
-        parseInt(priority) <= 3
-    ) {
-        next();
-    } else {
-        console.error('Invalid or missing Priority');
-        response.status(400).send({
-            message:
-                'Invalid or missing Priority - please refer to documentation',
-        });
-    }
-}
-
-function mwValidAuthorQuery(
+function mwValidAuthorDeleteQuery(
     request: Request,
     response: Response,
     next: NextFunction
@@ -86,43 +65,6 @@ function myValidPublicationYearQuery(
     }
 }
 
-function mwValidNameMessageBody(
-    request: Request,
-    response: Response,
-    next: NextFunction
-) {
-    if (
-        isStringProvided(request.body.name) &&
-        isStringProvided(request.body.message)
-    ) {
-        next();
-    } else {
-        console.error('Missing required information');
-        response.status(400).send({
-            message:
-                'Missing required information - please refer to documentation',
-        });
-    }
-}
-
-function mwValidNameLibraryBody(
-    request: Request,
-    response: Response,
-    next: NextFunction
-) {
-    if (
-        isStringProvided(request.body.name) &&
-        isStringProvided(request.body.message)
-    ) {
-        next();
-    } else {
-        console.error('Missing required information');
-        response.status(400).send({
-            message:
-                'Missing required information - please refer to documentation',
-        });
-    }
-}
 
 function myValidIsbn13Param(
     request: Request,
@@ -580,7 +522,7 @@ libraryRouter.delete(
  */
 libraryRouter.delete(
     '/remove/author/:author',
-    mwValidAuthorQuery,
+    mwValidAuthorDeleteQuery,
     (request: Request, response: Response) => {
         const theQuery = 'DELETE FROM BOOKS WHERE authors = $1 RETURNING *';
         const values = [request.params.author];
