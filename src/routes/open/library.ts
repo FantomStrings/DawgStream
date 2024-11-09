@@ -151,7 +151,7 @@ function myValidIsbn13Param(
     } else {
         console.error('Invalid or missing isbn13');
         response.status(400).send({
-            message: 'Invalid or missing ISBN - please refer to documentation',
+            message: 'Invalid or missing isbn13 - please refer to documentation',
         });
     }
 }
@@ -552,8 +552,8 @@ libraryRouter.put('/update/ratings', async (req: Request, res: Response) => {
  * @apiSuccess {String[]} entries The list of deleted entries, formatted as:
  *      "ISBN: <code>isbn</code>, Title: <code>title</code>"
  *
- * @apiError (400: Invalid or missing ISBN) {String} message "Invalid or missing ISBN - please refer to documentation"
- * @apiError (404: No ISBN found) {String} message "No book for ISBN ${request.params.isbn13} found"
+ * @apiError (400: Invalid or missing ISBN) {String} message "Invalid or missing isbn13 - please refer to documentation"
+ * @apiError (404: No ISBN found) {String} message "No book for isbn13 ${request.params.isbn13} found"
  */
 libraryRouter.delete(
     '/remove/ISBN/:isbn13',
@@ -570,7 +570,7 @@ libraryRouter.delete(
                     });
                 } else {
                     return response.status(404).send({
-                        message: `No book for ISBN ${request.params.isbn13} found`,
+                        message: `No book for isbn13 ${request.params.isbn13} found`,
                     });
                 }
             })
@@ -709,7 +709,7 @@ libraryRouter.get(
                     });
                 } else {
                     response.status(404).send({
-                        message: 'No book associated with this ISBN was found',
+                        message: 'No book associated with this isbn13 was found',
                     });
                 }
             })
@@ -780,7 +780,7 @@ libraryRouter.get(
  * @api {get} /library/retrieve/Author/:author Request to retrieve books by author's name
  *
  * @apiDescription Request to retrieve the information about all books written by <code>author</code>.
- *
+ *  
  * @apiName GetMessageAuthor
  * @apiGroup Library
  *
@@ -911,7 +911,7 @@ libraryRouter.get(
                     });
                 } else {
                     response.status(404).send({
-                        message: `No book associated with this rating was found`,
+                        message: `No book associated with this rating_avg was found`,
                     });
                 }
             })
