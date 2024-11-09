@@ -755,14 +755,14 @@ libraryRouter.get(
 );
 
 /**
- * @api {get} /library?author= Request to retrieve books by author's name
+ * @api {get} /library?authors= Request to retrieve books by author's name
  *
  * @apiDescription Request to retrieve the information about all books written by <code>author</code>.
  *
  * @apiName GetBookAuthor
  * @apiGroup Library
  *
- * @apiQuery {string} author the author to look up.
+ * @apiQuery {string} authors the author to look up.
  *
  * @apiSuccess {String[]} entries the aggregate of all entries as the following string:
  *      "{<code>title</code>} by <code>authors</code> - ISBN: <code>isbn13</code>, published in <code>publication_year</code>, average rating: <code>rating_avg</code>"
