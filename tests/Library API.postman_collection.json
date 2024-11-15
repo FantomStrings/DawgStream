@@ -109,7 +109,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"ISBN\": 9781234567890,\r\n  \"title\": \"The Great Book\",\r\n  \"author\": \"\",\r\n  \"publicationYear\": 2021,\r\n  \"totalRatings\": 0,\r\n  \"1Star\": 0,\r\n  \"2Star\": 0,\r\n  \"3Star\": 0,\r\n  \"4Star\": 0,\r\n  \"5Star\": 0\r\n}\r\n",
+					"raw": "{\r\n  \"ISBN\": 9781234567890,\r\n  \"title\": \"The Great Book\",\r\n  \"author\": \"\",\r\n  \"publicationYear\": 2021,\r\n  \"totalRatings\": 0,\r\n  \"1Star\": 0,\r\n  \"2Star\": 0,\r\n  \"3Star\": 0,\r\n  \"4Star\": 0,\r\n  \"5Star\": 0,\r\n  \"imageSmallURL\": \"www.NotARealSmall.com\",\r\n  \"imageLargeURL\": \"www.NotARealLarge.com\"\r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -173,7 +173,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"ISBN\": null,\r\n  \"title\": \"The Great Book\",\r\n  \"author\": \"John Doe\",\r\n  \"publicationYear\": 2021,\r\n  \"totalRatings\": 0,\r\n  \"1Star\": 0,\r\n  \"2Star\": 0,\r\n  \"3Star\": 0,\r\n  \"4Star\": 0,\r\n  \"5Star\": 0\r\n}\r\n",
+					"raw": "{\r\n  \"ISBN\": null,\r\n  \"title\": \"The Great Book\",\r\n  \"author\": \"John Doe\",\r\n  \"publicationYear\": 2021,\r\n  \"totalRatings\": 0,\r\n  \"1Star\": 0,\r\n  \"2Star\": 0,\r\n  \"3Star\": 0,\r\n  \"4Star\": 0,\r\n  \"5Star\": 0,\r\n  \"imageSmallURL\": \"www.NotARealSmall.com\",\r\n  \"imageLargeURL\": \"www.NotARealLarge.com\"\r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -216,7 +216,7 @@
 							"pm.test(\"Error message for missing publicationYear\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
 							"    pm.expect(jsonData).to.have.property(\"message\");\r",
-							"    pm.expect(jsonData.message).to.equal(\"Invalid or missing publication date - please refer to documentation\");\r",
+							"    pm.expect(jsonData.message).to.equal(\"Invalid or missing publication year - please refer to documentation\");\r",
 							"});\r",
 							"\r",
 							""
@@ -237,7 +237,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"ISBN\": 9781234567890,\r\n  \"title\": \"The Great Book\",\r\n  \"author\": \"John Doe\",\r\n  \"publicationYear\": null,\r\n  \"totalRatings\": 0,\r\n  \"1Star\": 0,\r\n  \"2Star\": 0,\r\n  \"3Star\": 0,\r\n  \"4Star\": 0,\r\n  \"5Star\": 0\r\n}\r\n",
+					"raw": "{\r\n  \"ISBN\": 9781234567890,\r\n  \"title\": \"The Great Book\",\r\n  \"author\": \"John Doe\",\r\n  \"publicationYear\": null,\r\n  \"totalRatings\": 0,\r\n  \"1Star\": 0,\r\n  \"2Star\": 0,\r\n  \"3Star\": 0,\r\n  \"4Star\": 0,\r\n  \"5Star\": 0,\r\n  \"imageSmallURL\": \"www.NotARealSmall.com\",\r\n  \"imageLargeURL\": \"www.NotARealLarge.com\"\r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -293,7 +293,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"ISBN\": 9781234567899,\r\n  \"title\": \"The Great Book\",\r\n  \"author\": \"John Doe\",\r\n  \"publicationYear\": 2021,\r\n  \"totalRatings\": 12,\r\n  \"oneStar\": 1,\r\n  \"twoStar\": 2,\r\n  \"threeStar\": -3,\r\n  \"fourStar\": 4,\r\n  \"fiveStar\": 5\r\n}\r\n",
+					"raw": "{\r\n  \"ISBN\": 9781234567899,\r\n  \"title\": \"The Great Book\",\r\n  \"author\": \"John Doe\",\r\n  \"publicationYear\": 2021,\r\n  \"totalRatings\": 12,\r\n  \"oneStar\": 1,\r\n  \"twoStar\": 2,\r\n  \"threeStar\": -3,\r\n  \"fourStar\": 4,\r\n  \"fiveStar\": 5,\r\n  \"imageSmallURL\": \"www.NotARealSmall.com\",\r\n  \"imageLargeURL\": \"www.NotARealLarge.com\"\r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -348,7 +348,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"ISBN\": 9781416524790,\r\n  \"title\": \"The Great Book\",\r\n  \"author\": \"John Doe\",\r\n  \"publicationYear\": 2021,\r\n  \"totalRatings\": 0,\r\n  \"1Star\": 0,\r\n  \"2Star\": 0,\r\n  \"3Star\": 0,\r\n  \"4Star\": 0,\r\n  \"5Star\": 0\r\n}",
+					"raw": "{\r\n  \"ISBN\": 9781416524790,\r\n  \"title\": \"The Great Book\",\r\n  \"author\": \"John Doe\",\r\n  \"publicationYear\": 2021,\r\n  \"totalRatings\": 0,\r\n  \"1Star\": 0,\r\n  \"2Star\": 0,\r\n  \"3Star\": 0,\r\n  \"4Star\": 0,\r\n  \"5Star\": 0,\r\n  \"imageSmallURL\": \"www.NotARealSmall.com\",\r\n  \"imageLargeURL\": \"www.NotARealLarge.com\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -376,7 +376,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"ISBN\": 9781416527449,\r\n  \"title\": \"This is a Book\",\r\n  \"author\": \"XYZ\",\r\n  \"publicationYear\": 2021,\r\n  \"totalRatings\": 0,\r\n  \"1Star\": 0,\r\n  \"2Star\": 0,\r\n  \"3Star\": 0,\r\n  \"4Star\": 0,\r\n  \"5Star\": 0\r\n}",
+					"raw": "{\r\n  \"ISBN\": 9781416527449,\r\n  \"title\": \"This is a Book\",\r\n  \"author\": \"XYZ\",\r\n  \"publicationYear\": 2021,\r\n  \"totalRatings\": 0,\r\n  \"1Star\": 0,\r\n  \"2Star\": 0,\r\n  \"3Star\": 0,\r\n  \"4Star\": 0,\r\n  \"5Star\": 0,\r\n  \"imageSmallURL\": \"www.NotARealSmall.com\",\r\n  \"imageLargeURL\": \"www.NotARealLarge.com\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -404,7 +404,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"ISBN\": 9781416526449,\r\n  \"title\": \"This is also a Book\",\r\n  \"author\": \"ABC\",\r\n  \"publicationYear\": 2021,\r\n  \"totalRatings\": 0,\r\n  \"1Star\": 0,\r\n  \"2Star\": 0,\r\n  \"3Star\": 0,\r\n  \"4Star\": 0,\r\n  \"5Star\": 0\r\n}",
+					"raw": "{\r\n  \"ISBN\": 9781416526449,\r\n  \"title\": \"This is also a Book\",\r\n  \"author\": \"ABC\",\r\n  \"publicationYear\": 2021,\r\n  \"totalRatings\": 0,\r\n  \"1Star\": 0,\r\n  \"2Star\": 0,\r\n  \"3Star\": 0,\r\n  \"4Star\": 0,\r\n  \"5Star\": 0,\r\n  \"imageSmallURL\": \"www.NotARealSmall.com\",\r\n  \"imageLargeURL\": \"www.NotARealLarge.com\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -768,7 +768,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"ISBN\": 9781416524723,\r\n  \"title\": \"The Hobbit\",\r\n  \"author\": \"John Doe\",\r\n  \"publicationYear\": 2021,\r\n  \"totalRatings\": 0,\r\n  \"1Star\": 0,\r\n  \"2Star\": 0,\r\n  \"3Star\": 0,\r\n  \"4Star\": 0,\r\n  \"5Star\": 0\r\n}",
+					"raw": "{\r\n  \"ISBN\": 9781416524723,\r\n  \"title\": \"The Hobbit\",\r\n  \"author\": \"John Doe\",\r\n  \"publicationYear\": 2021,\r\n  \"totalRatings\": 0,\r\n  \"1Star\": 0,\r\n  \"2Star\": 0,\r\n  \"3Star\": 0,\r\n  \"4Star\": 0,\r\n  \"5Star\": 0,\r\n  \"imageSmallURL\": \"www.NotARealSmall.com\",\r\n  \"imageLargeURL\": \"www.NotARealLarge.com\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -889,7 +889,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"ISBN\": 9781234567894,\r\n  \"title\": \"The Great Book\",\r\n  \"author\": \"John Doe\",\r\n  \"publicationYear\": 2021\r\n  /*\"totalRatings\": 0,\r\n  \"1Star\": null,\r\n  \"2Star\": null,\r\n  \"3Star\": null,\r\n  \"4Star\": null,\r\n  \"5Star\": null*/\r\n}\r\n",
+					"raw": "{\r\n  \"ISBN\": 9781234567894,\r\n  \"title\": \"The Great Book\",\r\n  \"author\": \"John Doe\",\r\n  \"publicationYear\": 2021,\r\n  \"imageSmallURL\": \"www.NotARealSmall.com\",\r\n  \"imageLargeURL\": \"www.NotARealLarge.com\"\r\n  /*\"totalRatings\": 0,\r\n  \"1Star\": null,\r\n  \"2Star\": null,\r\n  \"3Star\": null,\r\n  \"4Star\": null,\r\n  \"5Star\": null*/\r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"

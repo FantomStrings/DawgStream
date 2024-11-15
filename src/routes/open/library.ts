@@ -189,13 +189,15 @@ const checkBookExists = async (title: string) => {
  * @apiBody {number} isbn13 isbn13 *unique
  * @apiBody {string} title Title of the book *unique
  * @apiBody {string} author Author of the book
- * @apiBody {number} date The publication year
+ * @apiBody {number} publicationYear The publication year
  * @apiBody {number} [totalRatings] total number of ratings
  * @apiBody {number} [oneStar] number of 1 star reviews
  * @apiBody {number} [twoStar] number of 2 star reviews
  * @apiBody {number} [threeStar] number of 3 star reviews
  * @apiBody {number} [fourStar] number of 4 star reviews
  * @apiBody {number} [fiveStar] number of 5 star reviews
+ * @apiBody {string} imageSmallURL the url to the small image of the book
+ * @apiBody {string} imageLargeURL the url to the large image of the book
  *
  * @apiSuccess (Success 201) {JSON} Book The entered book object
  *
@@ -204,7 +206,9 @@ const checkBookExists = async (title: string) => {
  * @apiError (400: Invalid isbn13) {String} message "Invalid or Missing isbn13 - please refer to documentation"
  * @apiError (400: Invalid title) {String} message "Invalid or Missing book title - please refer to documentation"
  * @apiError (400: Invalid author) {String} message "Invalid or Missing book author - please refer to documentation"
- * @apiError (400: Invalid date) {String} message "Invalid or Missing publication date - please refer to documentation"
+ * @apiError (400: Invalid publication year) {String} message "Invalid or Missing publication year - please refer to documentation"
+ * @apiError (400: Invalid small url) {String} message "Invalid or missing small image url - please refer to the documentation"
+ * @apiError (400: Invalid large url) {String} message "Invalid or missing large image url - please refer to the documentation"
  * @apiError (400: Invalid Parameters) {String} message "Invalid or Missing required information - please refer to documentation"
  * @apiUse JSONError
  */
@@ -250,13 +254,32 @@ libraryRouter.post(
         if (validationFunctions.isNumberProvided(Date)) {
             //next();
         } else {
-            console.error('Invalid publiciation date');
+            console.error('Invalid publiciation year');
             return response.status(400).send({
                 message:
-                    'Invalid or missing publication date - please refer to documentation',
+                    'Invalid or missing publication year - please refer to documentation',
             });
         }
-
+        const imageSmallURL: string = request.body.imageSmallURL as string;
+        if (validationFunctions.isStringProvided(imageSmallURL)) {
+            //next();
+        } else {
+            console.error('Invalid small url');
+            return response.status(400).send({
+                message:
+                    'Invalid or missing small image url - please refer to the documentation',
+            });
+        }
+        const imageLargeURL: string = request.body.imageLargeURL as string;
+        if (validationFunctions.isStringProvided(imageLargeURL)) {
+            //next();
+        } else {
+            console.error('Invalid large url');
+            return response.status(400).send({
+                message:
+                    'Invalid or missing large image url - please refer to the documentation',
+            });
+        }
         next();
     },
     //Method to calculate average rating.
