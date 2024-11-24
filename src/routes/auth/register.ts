@@ -40,6 +40,11 @@ const isValidPhone = (phone: string): boolean =>
 const isValidEmail = (email: string): boolean =>
     isStringProvided(email) && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
+const isValidRole = (priority: string): boolean =>
+    validationFunctions.isNumberProvided(priority) &&
+    parseInt(priority) >= 1 &&
+    parseInt(priority) <= 5;
+
 // middleware functions may be defined elsewhere!
 const emailMiddlewareCheck = (
     request: Request,
@@ -70,6 +75,7 @@ const emailMiddlewareCheck = (
  * @apiBody {String} email a users email *unique
  * @apiBody {String} password a users password
  * @apiBody {String} username a username *unique
+ * @apiBody {String} role a role for this user [1-5]
  * @apiBody {String} phone a phone number for this user
  *
  * @apiSuccess (Success 201) {string} accessToken a newly created JWT
@@ -79,6 +85,7 @@ const emailMiddlewareCheck = (
  * @apiError (400: Invalid Password) {String} message "Invalid or missing password  - please refer to documentation"
  * @apiError (400: Invalid Phone) {String} message "Invalid or missing phone number  - please refer to documentation"
  * @apiError (400: Invalid Email) {String} message "Invalid or missing email  - please refer to documentation"
+ * @apiError (400: Invalid Role) {String} message "Invalid or missing role  - please refer to documentation"
  * @apiError (400: Username exists) {String} message "Username exists"
  * @apiError (400: Email exists) {String} message "Email exists"
  *
@@ -100,7 +107,7 @@ registerRouter.post(
         }
     },
     (request: Request, response: Response, next: NextFunction) => {
-        if (isValidPhone(request.body.phone)) {
+        if (!request.body.phone || isValidPhone(request.body.phone)) {
             next();
             return;
         } else {
@@ -121,6 +128,16 @@ registerRouter.post(
             });
         }
     },
+    (request: Request, response: Response, next: NextFunction) => {
+        if (isValidRole(request.body.role)) {
+            next();
+        } else {
+            response.status(400).send({
+                message:
+                    'Invalid or missing role  - please refer to documentation',
+            });
+        }
+    },
 
     (request: IUserRequest, response: Response, next: NextFunction) => {
         const theQuery =
@@ -130,7 +147,7 @@ registerRouter.post(
             request.body.lastname,
             request.body.username,
             request.body.email,
-            request.body.phone,
+            request.body.phone || null,
             request.body.role,
         ];
         console.dir({ ...request.body, password: '******' });
@@ -160,7 +177,6 @@ registerRouter.post(
             });
     },
     (request: IUserRequest, response: Response) => {
-
         const salt = generateSalt(32);
         const saltedHash = generateHash(request.body.password, salt);
 
