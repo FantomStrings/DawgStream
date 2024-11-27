@@ -28,24 +28,28 @@ const key = {
 };
 
 /**
- * @api {post} /login Request to sign a user in the system
+ * @api {post} /login Request to log in a user
  * @apiName PostLogin
  * @apiGroup Auth
  *
- * @apiBody {String} email a users email
- * @apiBody {String} password a users password
+ * @apiDescription This endpoint allows a user to log in by providing valid email and password credentials. 
+ * If the credentials are correct, the response will include a JSON Web Token (JWT) for authentication and 
+ * a user object containing relevant user details.
  *
- * @apiSuccess {String} accessToken JSON Web Token
- * @apiSuccess {Object} user a user object
- * @apiSuccess {string} user.name the first name associated with <code>email</code>
- * @apiSuccess {string} user.message The message associated with <code>email</code>
- * @apiSuccess {number} user.priority The priority associated with <code>email</code>
+ * @apiBody {String} email The user's email address (must be valid and registered).
+ * @apiBody {String} password The user's password (must match the password associated with the email).
  *
- * @apiError (400: Missing Parameters) {String} message "Missing required information" when the request
- * does not supply an email and/or password
- * @apiError (400: Invalid Credentials) {String} message "Invalid Credentials" when either the
- * supplied email does not exist in the dataset or the supplied password does not match the
- * entry in the dataset
+ * @apiSuccess {String} accessToken JSON Web Token (JWT) for authenticated access.
+ * @apiSuccess {Object} user An object containing the logged-in user's details:
+ * - `name` {String}: The user's full name (first name + last name).
+ * - `email` {String}: The user's email address.
+ * - `role` {Number}: The user's role (e.g., 1 for Admin, 2 for User).
+ * - `id` {Number}: The unique ID associated with the user.
+ *
+ * @apiError (400: Missing Parameters) {String} message "Missing required information" when either the email or password is not provided in the request.
+ * @apiError (400: Invalid Credentials) {String} message "Invalid Credentials" when either:
+ * - The supplied email does not exist in the database.
+ * - The supplied password does not match the one associated with the email in the database.
  *
  */
 signinRouter.post(
@@ -113,17 +117,13 @@ signinRouter.post(
                             expiresIn: '14 days', // expires in 14 days
                         }
                     );
-                    //package and send the results
-                    // response.json({
-                    //     accessToken,
-                    //     id: result.rows[0].account_id,
-                    // });
+                   
                     response.json({
                         accessToken,
                         user: {
                             id: result.rows[0].account_id,
                             email: result.rows[0].email,
-                            name: result.rows[0].firstname,
+                            name: `${result.rows[0].firstname} ${result.rows[0].lastname}`,
                             role: 'Admin',
                         },
                     });

@@ -64,30 +64,33 @@ const emailMiddlewareCheck = (
 /**
  * @api {post} /register Request to register a user
  *
- * @apiDescription Document this route. !**Document the password rules here**!
- * !**Document the role rules here**!
+ * @apiDescription This endpoint allows a new user to register an account. All input fields must meet specific validation rules. See details below for required parameters and validation rules.
  *
  * @apiName PostRegister
  * @apiGroup Auth
  *
- * @apiBody {String} firstname a users first name
- * @apiBody {String} lastname a users last name
- * @apiBody {String} email a users email *unique
- * @apiBody {String} password a users password
- * @apiBody {String} username a username *unique
- * @apiBody {String} role a role for this user [1-5]
- * @apiBody {String} phone a phone number for this user
+ * @apiBody {String} firstname The user's first name (required).
+ * @apiBody {String} lastname The user's last name (required).
+ * @apiBody {String} email The user's email address (must include '@' and a domain, and be unique).
+ * @apiBody {String} password The user's password (must be at least 8 characters, include one uppercase letter, one lowercase letter, and one number).
+ * @apiBody {String} username A unique username for the user (required).
+ * @apiBody {String} role A role for the user (value must be between 1 and 5).
+ * @apiBody {String} phone The user's phone number (must contain at least 10 digits, no special characters).
  *
- * @apiSuccess (Success 201) {string} accessToken a newly created JWT
- * @apiSuccess (Success 201) {number} id unique user id
+ * @apiSuccess (Success 201) {String} accessToken A newly created JSON Web Token (JWT) for the user.
+ * @apiSuccess (Success 201) {Object} user An object containing the newly registered user's details:
+ * - `name` {String}: The user's full name (first name + last name).
+ * - `email` {String}: The user's email address.
+ * - `role` {Number}: The user's role.
+ * - `id` {Number}: The unique ID of the user.
  *
- * @apiError (400: Missing Parameters) {String} message "Missing required information"
- * @apiError (400: Invalid Password) {String} message "Invalid or missing password  - please refer to documentation"
- * @apiError (400: Invalid Phone) {String} message "Invalid or missing phone number  - please refer to documentation"
- * @apiError (400: Invalid Email) {String} message "Invalid or missing email  - please refer to documentation"
- * @apiError (400: Invalid Role) {String} message "Invalid or missing role  - please refer to documentation"
- * @apiError (400: Username exists) {String} message "Username exists"
- * @apiError (400: Email exists) {String} message "Email exists"
+ * @apiError (400: Missing Parameters) {String} message "Missing required information" if any required fields are missing.
+ * @apiError (400: Invalid Password) {String} message "Invalid or missing password - please refer to documentation" if the password does not meet validation rules.
+ * @apiError (400: Invalid Phone) {String} message "Invalid or missing phone number - please refer to documentation" if the phone number does not meet validation rules.
+ * @apiError (400: Invalid Email) {String} message "Invalid or missing email - please refer to documentation" if the email does not meet validation rules.
+ * @apiError (400: Invalid Role) {String} message "Invalid or missing role - please refer to documentation" if the role is not between 1 and 5.
+ * @apiError (400: Username exists) {String} message "Username exists" if the username is already in use.
+ * @apiError (400: Email exists) {String} message "Email exists" if the email is already in use.
  *
  */
 registerRouter.post(
@@ -107,7 +110,7 @@ registerRouter.post(
         }
     },
     (request: Request, response: Response, next: NextFunction) => {
-        if (!request.body.phone || isValidPhone(request.body.phone)) {
+        if (isValidPhone(request.body.phone)) {
             next();
             return;
         } else {
@@ -147,7 +150,7 @@ registerRouter.post(
             request.body.lastname,
             request.body.username,
             request.body.email,
-            request.body.phone || null,
+            request.body.phone,
             request.body.role,
         ];
         console.dir({ ...request.body, password: '******' });
@@ -195,10 +198,16 @@ registerRouter.post(
                         expiresIn: '14 days',
                     }
                 );
+                const user = {
+                    name: `${request.body.firstname} ${request.body.lastname}`,
+                    email: request.body.email,
+                    role: request.body.role,
+                    id: request.id,
+                };
 
                 response.status(201).send({
                     accessToken,
-                    id: request.id,
+                    user,
                 });
             })
             .catch((error) => {
