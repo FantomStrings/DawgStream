@@ -65,7 +65,6 @@ function myValidPublicationYearQuery(
     }
 }
 
-
 function myValidIsbn13Param(
     request: Request,
     response: Response,
@@ -77,7 +76,8 @@ function myValidIsbn13Param(
     } else {
         console.error('Invalid or missing isbn13');
         response.status(400).send({
-            message: 'Invalid or missing isbn13 - please refer to documentation',
+            message:
+                'Invalid or missing isbn13 - please refer to documentation',
         });
     }
 }
@@ -652,7 +652,8 @@ libraryRouter.get(
                     });
                 } else {
                     response.status(404).send({
-                        message: 'No book associated with this isbn13 was found',
+                        message:
+                            'No book associated with this isbn13 was found',
                     });
                 }
             })
@@ -669,20 +670,20 @@ libraryRouter.get(
 /**
  * @api {get} /library/title/:title Request to retrieve a book by title
  *
- * @apiDescription Request to retrieve a specific book by <code>title</code>. 
+ * @apiDescription Request to retrieve a specific book by <code>title</code>.
  *
  * @apiName RetrieveBookTitle
  * @apiGroup Library
  *
  * @apiParam {string} title the title to look up the specific book.
- * 
+ *
  * @apiSuccess {Object} entry the message book object for <code>title</code>
  * @apiSuccess {number} entry.isbn13 the ISBN of the book associated with <code>title</code>
  * @apiSuccess {string} entry.authors the author of the book associated with <code>title</code>
  * @apiSuccess {number} entry.publication_year the published year of the book associated with <code>title</code>
  * @apiSuccess {string} entry.title the book title associated with <code>title</code>
  * @apiSuccess {number} entry.rating_avg The average rating of the book associated with <code>title</code>
- * 
+ *
  *
  * @apiError (400: Invalid title) {String} message "Invalid or missing title  - please refer to documentation"
  * @apiError (404: Book Not Found) {string} message "No book associated with this title was found"
@@ -750,7 +751,7 @@ libraryRouter.get('/', (request: Request, response: Response, next) => {
                 .then((result) => {
                     if (result.rowCount > 0) {
                         return response.send({
-                            entries: result.rows.map(format),
+                            entries: result.rows, //.map(format),
                         });
                     } else {
                         return response.status(404).send({
@@ -803,7 +804,7 @@ libraryRouter.get('/', (request: Request, response: Response, next) => {
                 .then((result) => {
                     if (result.rowCount > 0) {
                         response.send({
-                            entries: result.rows.map(format),
+                            entries: result.rows, //.map(format),
                         });
                     } else {
                         response.status(404).send({
